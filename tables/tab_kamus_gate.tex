@@ -1,0 +1,24 @@
+\begin{table}[H]
+    \centering
+    \caption{Kamus Data Tabel \textit{gate}}
+    \label{tab:kamus_gate}
+    \begin{tabular}{|l|l|p{8cm}|}
+        \hline
+        \textbf{Nama Kolom} & \textbf{Tipe Data} & \textbf{Keterangan} \\
+        \hline
+        id & UUID & Identifier unik internal untuk setiap gerbang (Primary Key). \\
+        \hline
+        device\_id & String & ID unik perangkat yang ditetapkan oleh sistem. \\
+        \hline
+        name & VarChar(128) & Nama deskriptif lokasi gerbang (misal: Lobi Jalur 1). \\
+        \hline
+        ip\_address & VarChar(64) & Alamat IP terminal gerbang di jaringan lokal. \\
+        \hline
+        username & VarChar(64) & Kredensial akun untuk otentikasi ISAPI. \\
+        \hline
+        password & VarChar(128) & Kata sandi perangkat (disimpan dalam bentuk terenkripsi). \\
+        \hline
+        direction & Enum & Arah akses gerbang (IN atau OUT). \\
+        \hline
+    \end{tabular}
+\end{table}

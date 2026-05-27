@@ -1,0 +1,26 @@
+\begin{table}[H]
+    \centering
+    \caption{Rancangan Integrasi Protokol ISAPI (Outbound)}
+    \label{tab:api_isapi}
+    \begin{tabular}{|l|c|p{8cm}|}
+        \hline
+        \textbf{ISAPI Path} & \textbf{Metode} & \textbf{Tujuan Operasi} \\
+        \hline
+        /ISAPI/AccessControl/AcsEvent & POST & Melakukan pemindaian (\textit{polling}) terhadap log kejadian terbaru. \\
+        \hline
+        /ISAPI/AccessControl/AcsWorkStatus & GET & Memantau status kesehatan terminal dan kondisi kunci pintu secara \textit{real-time}. \\
+        \hline
+        /ISAPI/AccessControl/UserInfo/Record & POST/PUT & Menambahkan atau memperbarui identitas subjek pada memori terminal. \\
+        \hline
+        /ISAPI/AccessControl/UserInfo/Search & POST & Menarik daftar ID karyawan yang terdaftar untuk fase \textit{Mark}. \\
+        \hline
+        /ISAPI/AccessControl/UserInfo/Delete & PUT & Mencabut hak akses subjek dari perangkat keras. \\
+        \hline
+        /ISAPI/AccessControl/RemoteControl/door/1 & PUT & Melakukan instruksi pembukaan pintu secara jarak jauh (\textit{remote open}). \\
+        \hline
+        /ISAPI/Intelligent/FDLib/FaceDataRecord & POST/PUT & Melakukan transmisi data biner (\textit{multipart}) untuk pembaruan profil wajah pada pustaka biometrik terminal. \\
+        \hline
+        /ISAPI/.../picture/... & GET & Mengunduh aset biner foto kejadian anomali berdasarkan referensi URL dinamis dari log terminal. \\
+        \hline
+    \end{tabular}
+\end{table}

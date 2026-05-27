@@ -1,0 +1,26 @@
+\begin{table}[H]
+    \centering
+    \caption{Kamus Data Tabel \textit{access\_record}}
+    \label{tab:kamus_access_record}
+    \begin{tabular}{|l|l|p{8cm}|}
+        \hline
+        \textbf{Nama Kolom} & \textbf{Tipe Data} & \textbf{Keterangan} \\
+        \hline
+        serialNo & VarChar(128) & Nomor seri unik kejadian dari protokol ISAPI (Primary Key). \\
+        \hline
+        major & Int & Kode kategori kejadian (\textit{Major Event Code}). \\
+        \hline
+        minor & Int & Kode spesifik kejadian (\textit{Minor Event Code}). \\
+        \hline
+        time & DateTime & Stempel waktu saat akses terjadi di gerbang. \\
+        \hline
+        person\_id & VarChar(32) & Relasi ke identitas karyawan (Foreign Key ke \textit{person}). \\
+        \hline
+        gate\_id & UUID & Relasi ke terminal gerbang (Foreign Key ke \textit{gate}). \\
+        \hline
+        snapshot\_path & VarChar(255) & Jalur penyimpanan foto bukti anomali di server. \\
+        \hline
+        is\_processed & Boolean & Status pemrosesan data untuk kebutuhan analitik. \\
+        \hline
+    \end{tabular}
+\end{table}

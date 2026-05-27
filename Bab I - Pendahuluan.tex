@@ -3,110 +3,80 @@
 \label{chap:pendahuluan}
 % --- Latar Belakang ---
 \section{Latar Belakang}
-Subbab ini menjelaskan dasar pemikiran, motivasi, kebutuhan, alasan, atau urgensi pemilihan masalah tugas akhir. Subbab ini berisi penjelasan ringkas tentang kondisi atau situasi yang ada saat ini terkait dengan topik yang dibahas. Tujuan utamanya adalah untuk memberikan informasi secukupnya kepada pembaca agar memahami topik yang akan dibahas. Dalam subbab ini, jelaskan hal-hal berikut ini:
-\begin{enumerate}
-\item	Kondisi atau situasi topik yang dibahas beserta permasalahannya, misalnya tentang pengelolaan informasi di fasilitas kesehatan daerah pedesaan saat ini dan masalah yang dihadapi, berdasarkan hasil survei atau wawancara dengan pihak terkait.
-\item	Urgensi atau pentingnya penyelesaian masalah tersebut, misalnya dampak negatif yang ditimbulkan jika masalah tersebut tidak diselesaikan.
-\item	Berbagai solusi yang telah diterapkan maupun solusi yang memungkinkan untuk diterapkan untuk menyelesaikan masalah tersebut, berdasarkan hasil studi literatur, wawancara dengan pihak terkait, atau kunjungan lapangan.
-\item   Kelemahan atau kekurangan dari solusi yang telah diterapkan atau yang memungkinkan untuk diterapkan tersebut, yang menjadi dasar pemikiran dalam merumuskan masalah tugas akhir.
-\end{enumerate}
-Latar belakang dapat ditulis dalam 2-3 halaman. Penulisan latar belakang masalah yang baik akan mengantarkan pembaca kepada pemahaman yang jelas tentang topik yang akan dibahas, 
-sehingga pembaca dapat mengikuti pembahasan pada subbab-subbab berikutnya dengan baik. Oleh karena itu, 
-penulis diharapkan melakukan investigasi yang mendalam untuk mengumpulkan fakta-fakta yang relevan dengan topik yang dibahas, 
-baik melalui studi literatur, wawancara dengan pihak terkait, maupun kunjungan lapangan. Hasil studi ini dijelaskan secara \emph{ringkas} di dalam subbab ini.
-Penjelasan hasil studi literatur yang komprehensif dapat dijabarkan di Bab II Studi Literatur secara sistematis.
 
-Dalam menulis latar belakang, hindari penulisan yang bersifat terlalu umum atau terlalu luas cakupannya sehingga sulit untuk dihubungkan dengan topik yang dibahas dalam tugas akhir,
-seperti:
-\begin{enumerate}
-    \item "Pentingnya teknologi informasi dalam kehidupan manusia."
-    \item "Perkembangan pesat teknologi \emph{artificial intelligence} di era digital."
-    \item "Tantangan dalam pengelolaan data besar (\emph{big data}) di berbagai sektor industri."
-    \item "Peran teknologi informasi dalam meningkatkan kualitas layanan kesehatan."
-\end{enumerate}
-Penulisan yang terlalu umum atau luas cakupannya akan menyulitkan penulis dalam merumuskan masalah, tujuan, metodologi, dan evaluasi tugas akhir.
+Di era transformasi digital, pengembangan infrastruktur fasilitas publik menuntut standar efisiensi operasional dan keamanan yang semakin tinggi. Hal ini selaras dengan visi Gedung ITB Innovation Park (IIP) yang saat ini tengah bertransisi menuju konsep \textit{Smart and Green Building}. Transisi ini didukung oleh regulasi pemerintah pusat, khususnya Peraturan Menteri Pekerjaan Umum dan Perumahan Rakyat Nomor 10 Tahun 2023 tentang Bangunan Gedung Cerdas \autocite{kemenpupr2023}. Sebagai pusat inkubasi bisnis dan inovasi riset di bawah naungan Direktorat Kawasan Sains dan Teknologi (DKST), gedung IIP memiliki kompleksitas manajerial yang tinggi. Gedung ini menampung berbagai entitas pengguna, mulai dari karyawan tetap direktorat, staf dari puluhan perusahaan rintisan (\textit{tenant}), hingga tamu harian, dengan proyeksi kapasitas maksimal mencapai 1.200 orang per hari. 
 
-Jika ada referensi yang digunakan dalam penulisan latar belakang, cantumkan referensi tersebut dengan benar menggunakan \texttt{biblatex} sesuai dengan contoh penulisan kutipan dan daftar pustaka yang telah disediakan dalam template ini.
-Sebagai contoh, pada paragraf berikut ini terdapat kutipan dari dua referensi yang berbeda \autocite{laudon2020, pressman2019}. 
-Ada dua format penulisan sitasi yang dapat digunakan, yaitu format naratif dan format parentetik.
-Contoh penulisan kutipan dengan format naratif adalah sebagai berikut:
-\begin{displayquote}
-Menurut \textcite{laudon2020}, sistem informasi adalah kombinasi dari teknologi informasi dan aktivitas orang yang menggunakan teknologi tersebut untuk mendukung operasi dan manajemen organisasi.
-\end{displayquote}
-Contoh penulisan kutipan dengan format parentetik adalah sebagai berikut:
-\begin{displayquote}
-    Sistem informasi merupakan kombinasi dari teknologi informasi dan aktivitas orang yang menggunakan teknologi tersebut untuk mendukung operasi dan manajemen organisasi \autocite{laudon2020}.
-\end{displayquote}
+Manajemen akses fisik menjadi salah satu elemen paling krusial dalam operasional gedung dengan kepadatan tinggi tersebut. Berdasarkan hasil observasi dan wawancara dengan pengelola IIP, pengelolaan akses saat ini masih menghadapi tantangan besar pada aspek interoperabilitas dan integrasi. Perangkat keras pengaman seperti gerbang pembatas (\textit{turnstile gate}) memang telah diimplementasikan di lobi utama dan area basemen, serta telah saling terkoneksi pada satu jaringan. Dalam operasionalnya, saat pendaftaran biometrik dilakukan, data tersebut dikirimkan ke sebuah komputer pusat yang menjalankan perangkat lunak bawaan vendor untuk kemudian didistribusikan ke gerbang lainnya. Namun, ekosistem perangkat lunak bawaan ini bersifat sangat tertutup (\textit{siloed}) dan kaku karena hanya berbasis \textit{desktop} lokal. Akibatnya, data pergerakan personel dan log riwayat akses terkunci di dalam aplikasi komputer tersebut dan tidak dapat ditarik secara \textit{real-time} oleh platform \textit{Building Management System} (BMS) eksternal yang sedang dikembangkan oleh gedung. Kondisi ini memicu inefisiensi operasional dan fleksibilitas, karena petugas keamanan harus selalu bergantung secara fisik pada satu stasiun komputer spesifik tersebut untuk sekadar memantau okupansi gedung maupun melakukan manajemen kredensial. Ketergantungan pada solusi lokal vendor inilah yang menghambat terwujudnya sistem kendali gedung cerdas yang holistik, terpusat, dan dapat diakses dari mana saja \autocite{buildings14113446}.
+
+Ketiadaan sistem manajemen akses yang terpusat ini menimbulkan urgensi operasional dan risiko keamanan yang serius. Dari perspektif manajerial, pencatatan absensi atau pergerakan karyawan menjadi tidak akurat; sebagai contoh, ketiadaan sensor keluar di area basemen menyebabkan hilangnya data rekam jejak penghuni yang meninggalkan gedung. Dari perspektif keamanan dan mitigasi bencana, kelemahan ini berdampak fatal. Tanpa adanya log pergerakan (\textit{in/out}) yang diagregasi secara \textit{real-time}, petugas keamanan tidak memiliki visibilitas terhadap total okupansi atau jumlah orang yang masih berada di dalam gedung. Dalam skenario evakuasi darurat, seperti aktivasi \textit{Master Control Fire Alarm} (MCFA), ketiadaan data okupansi yang presisi akan sangat menghambat operasi penyelamatan \autocite{SAINI2022106}. Selain itu, ketiadaan rekam jejak pergerakan yang tersentralisasi membuat proses investigasi keamanan (misalnya dalam kasus pencarian barang hilang) memakan waktu yang sangat lama karena petugas harus meninjau rekaman CCTV secara manual.
+
+Untuk menjawab permasalahan tersebut, modernisasi menggunakan teknologi \textit{Face Recognition} (pengenalan wajah) pada gerbang akses telah diusulkan dan mulai diimplementasikan oleh manajemen gedung. Berbeda dengan kartu RFID yang rentan dipindahtangankan, teknologi biometrik wajah menawarkan validitas identitas yang absolut dan mekanisme \textit{contactless} yang mencegah antrian fisik di lobi \autocite{wanjare2024}. Namun, implementasi perangkat keras cerdas ini memunculkan permasalahan baru pada lapisan perangkat lunak. Perangkat lunak bawaan pabrik umumnya bersifat kaku, tertutup, dan tidak dirancang untuk membagikan data secara \textit{real-time} ke platform eksternal atau \textit{dashboard} kustom yang sedang dikembangkan oleh tim integrasi BMS IIP. Dominasi solusi tertutup dari berbagai vendor ini menciptakan lanskap teknologi yang terfragmentasi dan memicu risiko \textit{vendor lock-in}, di mana pengelola gedung terjebak dalam satu ekosistem yang sulit untuk saling bertukar informasi secara terbuka \autocite{s19020229}. Keterbatasan ini menghambat terciptanya satu pusat kendali informasi gedung yang holistik.
+
+Kelemahan pada aspek integrasi perangkat lunak inilah yang menjadi dasar pemikiran dalam tugas akhir ini. Penelitian ini merupakan bagian dari proyek kolaboratif pengembangan ekosistem BMS terintegrasi di Gedung IIP. Adapun ruang lingkup pada tugas akhir ini difokuskan secara spesifik pada perancangan arsitektur lapisan penengah (\textit{middleware}) dan antarmuka manajemen kontrol akses untuk entitas karyawan. Oleh karena itu, penelitian ini mengusulkan pengembangan Sistem Manajemen Karyawan Terpusat Berbasis Integrasi Perangkat Kontrol Akses pada Bangunan Gedung Cerdas yang mampu berkomunikasi langsung dengan memori terminal gerbang biometrik melalui protokol \textit{Intelligent Security API} (ISAPI). Melalui pendekatan ini, sistem mampu mendistribusikan data pendaftaran biometrik karyawan secara serentak ke seluruh gerbang dari satu antarmuka terpusat, serta menarik dan mengagregasi log pergerakan penghuni secara \textit{real-time}. Dengan demikian, kelemahan administratif dan urgensi keamanan dalam pengelolaan personel di Gedung IIP dapat diselesaikan secara komprehensif.
+
 % --- Rumusan Masalah ---
 \section{Rumusan Masalah}
-Rumusan Masalah berisi masalah utama yang dibahas dalam tugas akhir. Rumusan masalah yang baik memiliki struktur sebagai berikut:
+Berdasarkan latar belakang yang telah diuraikan, rumusan masalah dalam tugas akhir ini adalah sebagai berikut:
 \begin{enumerate}
-\item	Pokok persoalan dari kondisi atau situasi yang ada saat ini. Dengan kata lain, jelaskan kelemahan atau kekurangan dari kondisi, situasi, atau solusi yang dijelaskan pada latar belakang. Ini merupakan pokok rumusan masalah.
-\item	Elaborasi lebih lanjut urgensi penyelesaian masalah tersebut (mengapa penting untuk diselesaikan dan akibat yang dapat terjadi jika tidak diselesaikan).
-\item	Usulan singkat terkait dengan solusi yang ditawarkan untuk menyelesaikan persoalan.
-Penting untuk diperhatikan bahwa persoalan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di bab Evaluasi (apakah terselesaikan atau tidak).
+    \item Bagaimana arsitektur sistem manajemen berbasis web dapat dirancang untuk berkomunikasi dengan perangkat gerbang biometrik secara langsung tanpa mengandalkan aplikasi desktop pihak ketiga?
+    \item Bagaimana strategi sinkronisasi menggunakan protokol ISAPI untuk melakukan otomasi sinkronisasi data biometrik dan penarikan log pergerakan karyawan secara otomatis dari perangkat gerbang?
+    \item Bagaimana mengembangkan antarmuka dashboard berbasis web yang memungkinkan pemantauan riwayat akses secara real-time sekaligus menyediakan mekanisme verifikasi visual otomatis untuk kejadian anomali dengan tetap menjaga privasi data karyawan?
 \end{enumerate}
-Hindari penulisan rumusan masalah yang terlalu umum atau terlalu luas cakupannya sehingga sulit untuk diselesaikan dalam jangka waktu pelaksanaan tugas akhir, 
-seperti:
-\begin{enumerate}
-    \item "Bagaimana cara meningkatkan kualitas layanan kesehatan di Indonesia?"
-    \item "Bagaimana cara mengoptimalkan penggunaan energi di perkotaan?"
-    \item "Bagaimana cara mengurangi kemacetan lalu lintas di kota besar?"
-    \item "Bagaimana cara membangun sistem irigasi sawah menggunakan \emph{AI}?"
-\end{enumerate}
-Rumusan masalah yang baik dan spesifik akan memudahkan penulis dalam menentukan tujuan, metodologi, dan evaluasi tugas akhir.
-
-Selain itu, hindari menuliskan pertanyaan yang merupakan sebuah keniscayaan yang harus dijawab atau dikerjakan 
-dalam pelaksanaan tugas akhir, seperti:
-\begin{enumerate}
-    \item "Bagaimana cara melakukan analisis kebutuhan sistem informasi rumah sakit?"
-    \item "Bagaimana cara merancang basis data untuk aplikasi X?"
-    \item "Bagaimana cara mengimplementasikan \textit{large language model} untuk deteksi penyakit Y?"
-    \item "Bagaimana cara menguji sistem penyiraman tanaman berbasis IoT yang akan dibuat?"
-\end{enumerate}
-Kegiatan analisis, perancangan, implementasi, dan pengujian merupakan tahapan yang harus dilakukan dalam pelaksanaan tugas akhir,
-sehingga pertanyaan-pertanyaan tersebut tidak perlu dimasukkan ke dalam rumusan masalah.
 
 % --- Tujuan ---
 \section{Tujuan}
-Tuliskan \textbf{tujuan utama} dan/atau tujuan detail yang akan dicapai dalam pelaksanaan tugas akhir. 
-Fokuskan isi subbab ini pada hasil akhir yang ingin diperoleh setelah tugas akhir diselesaikan 
-terkait dengan penyelesaian persoalan pada rumusan masalah. 
-Penting untuk diperhatikan bahwa tujuan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan 
-di akhir pelaksanaan tugas akhir. Oleh karena itu, tuliskan juga \emph{kriteria keberhasilan} tugas akhir ini.
+Tujuan utama dari pelaksanaan tugas akhir ini adalah membangun Sistem Manajemen Karyawan Terpusat Berbasis Integrasi Perangkat Kontrol Akses pada Bangunan Gedung Cerdas untuk manajemen entitas karyawan di Gedung IIP guna mengatasi ketergantungan pada aplikasi lokal yang tertutup.
+\begin{enumerate}
+    \item Membangun basis data dan layanan backend (API) terpusat untuk mengonsolidasikan manajemen identitas dan kredensial karyawan.
+    \item Mengembangkan modul middleware menggunakan protokol ISAPI sebagai jembatan integrasi untuk otomasi sinkronisasi data biometrik dan penarikan log pergerakan terminal gerbang secara real-time.
+    \item Membangun aplikasi antarmuka web (dashboard) yang mengintegrasikan fitur pemantauan log pergerakan karyawan dan mekanisme verifikasi visual otomatis untuk kejadian anomali.
+\end{enumerate}
+Kriteria keberhasilan dari pelaksanaan tugas akhir ini adalah sebagai berikut:
+\begin{enumerate}
+    \item Pengelola dapat melakukan manajemen data profil karyawan (Tambah/Ubah/Hapus) secara terpusat melalui web, dan sistem berhasil menyinkronkan data tersebut ke perangkat gerbang biometrik melalui protokol ISAPI.
+    \item Sistem berhasil mengekstraksi, mengagregasi, dan menyajikan data log pergerakan karyawan secara akurat dan real-time sesuai dengan riwayat transaksi fisik pada perangkat keras.
+    \item Aplikasi dashboard dapat diakses melalui jaringan lokal gedung dan berhasil mengimplementasikan perlindungan privasi dengan menampilkan foto snapshot wajah secara eksklusif hanya pada log kejadian anomali (akses ditolak/tidak dikenal).
+\end{enumerate}
 
 % --- Batasan Masalah ---
 \section{Batasan Masalah}
-Tuliskan batasan-batasan yang diambil dalam pelaksanaan tugas akhir. Batasan ini dapat dihindari (bersifat opsional, tidak perlu ada) jika topik atau judul tugas akhir dibuat cukup spesifik.
+Ruang lingkup pelaksanaan tugas akhir ini dibatasi pada aspek perancangan dan implementasi sistem manajemen akses untuk entitas karyawan di Gedung IIP. Adapun batasan-batasan yang diambil dalam pelaksanaan tugas akhir ini adalah sebagai berikut:
+\begin{enumerate}
+    \item Sistem yang dikembangkan hanya akan terintegrasi dengan perangkat gerbang biometrik yang sudah ada di Gedung IIP, dan tidak mencakup integrasi dengan sistem keamanan lainnya seperti kamera CCTV atau sistem alarm kebakaran.
+    \item Sistem yang dikembangkan akan menggunakan protokol ISAPI untuk komunikasi dengan perangkat gerbang biometrik, dan tidak akan mengembangkan protokol komunikasi baru atau melakukan modifikasi pada perangkat keras gerbang.
+    \item Pengembangan antarmuka dashboard akan difokuskan pada fitur pemantauan log pergerakan karyawan dan mekanisme verifikasi visual otomatis, tanpa mengembangkan fitur tambahan seperti analisis perilaku atau prediksi keamanan.
+    \item Tugas akhir ini dikerjakan secara berkelompok yang terdiri dari 3 orang mahasiswa, yaitu Axelius Davin dengan NIM 18222016, Muhammad Rifa dengan NIM 18222004, dan Natanael Steven dengan NIM 18222054. Penulis dalam hal ini berfokus pada pengembangan sistem manajemen akses karyawan.
+    \item Pendaftaran karyawan pada sistem web saat ini terbatas pada sinkronisasi Nama, ID, dan Jenis Kelamin, serta tidak mencakup pengunggahan foto wajah dikarenakan keterbatasan teknis (multipart boundary) pada firmware perangkat yang digunakan (V4.38.0).
+    \item Pelacakan riwayat pergerakan dan status kehadiran karyawan pada sistem ini sangat bergantung pada ketersediaan perangkat keras di lapangan. Sistem tidak mencakup pengolahan data dari terminal gerbang area \textit{basement} (karena keterbatasan perangkat keras yang hanya menggunakan tombol fisik atau \textit{push button} untuk arah keluar), serta terminal gerbang arah keluar di area lobi utama (dikarenakan belum didapatkannya hak akses kredensial untuk integrasi perangkat tersebut selama masa penelitian berlangsung). Oleh karena itu, ketidaklengkapan pencatatan log keluar (\textit{check-out}) merupakan batasan fisik dan administratif yang berada di luar ruang lingkup pengembangan perangkat lunak ini.
+\end{enumerate}
 
 % --- Metodologi Pengerjaan TA ---
 \section{Metodologi}
-Tuliskan semua tahapan yang akan dilalui selama pelaksanaan tugas akhir. 
-Tahapan ini spesifik untuk menyelesaikan persoalan tugas akhir. 
-Berikut adalah contoh metodologi pengerjaan tugas akhir yang dapat diikuti, yaitu meliputi tahapan, langkah-langkah, 
-atau tata cara melakukan:
+Metodologi yang digunakan dalam pelaksanaan tugas akhir ini mengadopsi kerangka kerja \textit{Design Thinking} yang dipadukan dengan pendekatan Model Sistem (\textit{Prototyping Model}). \textit{Design Thinking} dipilih karena berpusat pada pemahaman mendalam terhadap masalah pengguna di lapangan, sementara Model Sistem memungkinkan pengembangan sistem integrasi antara perangkat lunak dan perangkat keras industrial secara iteratif. 
+
+Proses ini dilaksanakan dalam siklus iterasi, dimulai dari pembuktian konsep (\textit{Proof of Concept}) hingga integrasi menyeluruh dan penyempurnaan performa. Adapun tahapan-tahapan pelaksanaannya disusun ke dalam 7 (tujuh) langkah sistematis sebagai berikut:
+
 \begin{enumerate}
-\item	Investigasi pengumpulan fakta di latar belakang untuk merumuskan masalah.
-\item	Pencarian, pengelompokan, dan penapisan literatur atau sumber informasi untuk mengumpulkan informasi yang relevan tentang topik yang diangkat, termasuk teori (konsep atau teori apa saja yang perlu dicari), hal-hal yang telah dicapai oleh orang lain (cara mencari dan kata kuncinya), dan berbagai informasi pendukung, untuk mencari solusi terhadap masalah yang dibahas. Gunakan metodologi yang tepat dalam menggali informasi dan dokumentasikan prosesnya (termasuk rekaman wawancara atau survei) di dalam Lampiran, termasuk tautan ke video atau foto. Hasil penggalian informasi ini akan dijelaskan secara sistematis di Bab II Studi Literatur.
-\item   Analisis kebutuhan pengguna dan sistem berdasarkan hasil investigasi dan studi literatur. Jelaskan metode yang digunakan untuk melakukan analisis kebutuhan, misalnya wawancara, survei, observasi, atau studi kasus. Hasil analisis kebutuhan ini akan dijelaskan secara rinci di Bab III Analisis.
-\item   Perancangan solusi berdasarkan hasil analisis kebutuhan. Jelaskan metode yang digunakan untuk melakukan perancangan, misalnya menggunakan diagram UML, ERD, atau prototyping. Hasil perancangan ini akan dijelaskan secara rinci di Bab IV Perancangan.
-\item   Implementasi solusi berdasarkan hasil perancangan. Jelaskan teknologi, bahasa pemrograman, atau alat yang digunakan untuk mengimplementasikan solusi. Hasil implementasi ini akan dijelaskan secara rinci di Bab V Implementasi.
-\item   Evaluasi terhadap solusi yang telah diimplementasikan. Jelaskan metode pengujian, metrik evaluasi, atau studi kasus yang digunakan untuk menilai keberhasilan solusi. Hasil evaluasi ini akan dijelaskan secara rinci di Bab VI Evaluasi.
-\item   Penarikan kesimpulan dan saran berdasarkan hasil pelaksanaan tugas akhir. Hasil kesimpulan dan saran ini akan dijelaskan secara rinci di Bab VII Kesimpulan dan Saran. 
-\vfill % memaksa konten di atas untuk berada di bagian atas halaman dan menyisakan ruang kosong di bawah konten ini akibat berakhirnya section ini
+    \item Investigasi dan Pengumpulan Fakta (Tahap \textit{Empathize}): Tahap ini berfokus pada pemahaman masalah pengguna melalui observasi langsung di lobi Gedung ITB Innovation Park (IIP) dan wawancara dengan pengelola gedung. Tujuannya adalah memetakan alur masuk manual saat ini, mengidentifikasi hambatan dalam pengelolaan akses biometrik yang terfragmentasi, dan mengonfirmasi ketiadaan visibilitas data pergerakan secara terpusat.
+    \item Studi Literatur: Melakukan pencarian, pengelompokan, dan penapisan referensi ilmiah serta regulasi yang relevan untuk membangun landasan teori pendukung. Kajian difokuskan pada standar Bangunan Gedung Cerdas (BGC) yang mengacu pada Permen PUPR Nomor 10 Tahun 2023, tantangan interoperabilitas \textit{Internet of Things} (IoT), serta protokol komunikasi \textit{Intelligent Security API} (ISAPI).
+    \item Analisis Kebutuhan (Tahap \textit{Define}): Berdasarkan informasi yang disintesis dari tahap \textit{Empathize} dan studi literatur, dilakukan definisi masalah secara spesifik. Analisis mendalam dilakukan terhadap kebutuhan fungsional (seperti manajemen profil, sinkronisasi otomatis, dan penarikan log) serta kebutuhan non-fungsional (seperti keamanan jaringan lokal dan privasi data).
+    \item Perancangan Sistem (Tahap \textit{Ideate}): Tahap perumusan gagasan dan perancangan arsitektur solusi teknis. Kegiatan meliputi pemodelan basis data menggunakan \textit{Entity Relationship Diagram} (ERD), perancangan logika \textit{middleware} ISAPI, serta desain antarmuka pengguna pada \textit{dashboard} menggunakan diagram UML. 
+    \item Implementasi Sistem (Tahap \textit{Prototype}): Realisasi rancangan menjadi sistem fisik dan perangkat lunak yang terintegrasi. Tahap ini mencakup pembangunan layanan \textit{backend} menggunakan NestJS dan PostgreSQL, pengembangan modul integrasi langsung untuk mengeksekusi perintah perangkat keras biometrik, serta pembuatan antarmuka \textit{frontend} menggunakan kerangka kerja Next.js.
+    \item Evaluasi Sistem (Tahap \textit{Test}): Pengujian terhadap Sistem yang telah dibangun untuk memvalidasi kinerjanya dalam lingkungan operasional nyata. Pengujian mencakup pengukuran akurasi sinkronisasi data biometrik, ketepatan logika, dan kecepatan visualisasi. 
+    \item Penarikan Kesimpulan: Merangkum hasil pengembangan dan evaluasi berdasarkan kriteria keberhasilan yang telah ditetapkan pada awal penelitian. Tahap ini juga mencakup penyusunan saran dan rekomendasi pengembangan untuk masa mendatang.
 \end{enumerate}
 
 % --- Sistematika Penulisan ---
 \section{Sistematika Penulisan}
-Tuliskan gambaran umum isi dari setiap bab yang ada dalam laporan tugas akhir. Sistematika penulisan ini memberikan panduan bagi pembaca tentang struktur dan alur pembahasan dalam laporan tugas akhir. Berikut adalah contoh sistematika penulisan yang dapat diikuti:
+Laporan tugas akhir ini disusun dengan sistematika penulisan sebagai berikut:
 \begin{enumerate}
-\item	Bab I Pendahuluan: Berisi latar belakang, rumusan masalah, tujuan, batasan masalah, metodologi, dan sistematika penulisan laporan tugas akhir       .
-\item	Bab II Studi Literatur: Berisi kajian pustaka yang relevan dengan topik tugas akhir, termasuk teori-teori, konsep-konsep, dan hasil-hasil penelitian sebelumnya yang                mendukung pelaksanaan tugas akhir.
-\item	Bab III Analisis: Berisi penjelasan tentang analisis masalah dan kebutuhan pengguna serta berbagai alternatif solusinya.
-\item   Bab IV Perancangan: Berisi penjelasan tentang perancangan solusi yang diusulkan, misalnya arsitektur sistem, desain basis data, antarmuka pengguna, dan sebagainya.
-\item	Bab V Implementasi: Berisi penjelasan tentang proses implementasi solusi yang diusulkan, termasuk langkah-langkah yang diambil, teknologi yang digunakan, dan hasil yang diperoleh.
-\item	Bab VI Evaluasi: Berisi analisis dan evaluasi terhadap solusi yang diimplementasikan, termasuk metode pengujian, hal-hal yang disiapkan sebelum pengujian, hasil pengujian, dan penilaian kinerja.                  
-\item   Bab VII Kesimpulan dan Saran: Berisi kesimpulan dari hasil pelaksanaan tugas akhir dan saran untuk pengembangan lebih lanjut.
-\item   Daftar Pustaka: Berisi daftar referensi yang digunakan dalam penyusunan laporan tugas akhir.
-\item   Lampiran: Berisi dokumen-dokumen pendukung seperti kode program, data lengkap hasil pengujian, rekaman wawancara, dan lain-lain. 
+    \item	Bab I Pendahuluan: Berisi latar belakang masalah pengelolaan akses karyawan di Gedung IIP, rumusan masalah dalam bentuk pertanyaan penelitian, tujuan utama dan detail, kriteria keberhasilan, batasan masalah, metodologi pengembangan sistem menggunakan pendekatan Design Thinking, serta sistematika penulisan laporan.
+    \item   Bab II Studi Literatur: Berisi landasan teori yang mendukung penelitian, meliputi standar Bangunan Gedung Cerdas mengacu pada Permen PUPR Nomor 10 Tahun 2023, konsep interoperabilitas IoT, arsitektur protokol ISAPI Hikvision, serta kerangka kerja Design Thinking sebagai metode pengembangan sistem.
+    \item	Bab III Analisis: Berisi hasil investigasi dan analisis terhadap kondisi sistem kontrol akses saat ini di lobi Gedung IIP, identifikasi kebutuhan pengguna, serta spesifikasi kebutuhan fungsional dan non-fungsional sistem.
+    \item   Bab IV Perancangan Sistem Kontrol Akses Terpusat: Berisi perancangan arsitektur sistem secara umum, desain basis data (ERD), perancangan logika middleware untuk sinkronisasi data biometrik melalui protokol ISAPI, serta desain antarmuka pengguna (UI/UX) untuk dashboard pemantauan karyawan.
+    \item	Bab V Implementasi Sistem Kontrol Akses Terpusat: Berisi detail realisasi rancangan menjadi kode program menggunakan kerangka kerja NestJS untuk backend, integrasi layanan komunikasi perangkat keras melalui ISAPI, serta pengembangan aplikasi web frontend menggunakan Next.js.
+    \item	Bab VI Evaluasi: Berisi prosedur pengujian fungsionalitas sistem menggunakan metode Black-box Testing, hasil pengukuran performa sinkronisasi data, serta evaluasi fitur verifikasi visual kejadian anomali untuk menjawab kriteria keberhasilan yang telah ditetapkan.            
+    \item   Bab VII Kesimpulan dan Saran: Berisi kesimpulan akhir dari seluruh proses pengerjaan tugas akhir yang merujuk pada pencapaian tujuan, serta saran untuk pengembangan sistem di masa depan.
+    \item   Daftar Pustaka: Berisi daftar referensi yang digunakan dalam penyusunan laporan tugas akhir.
+    \item   Lampiran: Berisi dokumen-dokumen pendukung seperti kode program, data lengkap hasil pengujian, rekaman wawancara, dan lain-lain. 
 \end{enumerate}

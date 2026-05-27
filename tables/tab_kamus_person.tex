@@ -1,0 +1,26 @@
+\begin{table}[H]
+    \centering
+    \caption{Kamus Data Tabel \textit{person}}
+    \label{tab:kamus_person}
+    \begin{tabular}{|l|l|p{8cm}|}
+        \hline
+        \textbf{Nama Kolom} & \textbf{Tipe Data} & \textbf{Keterangan} \\
+        \hline
+        employeeNo & VarChar(32) & ID unik utama yang disinkronkan dengan terminal (Primary Key). \\
+        \hline
+        name & VarChar(128) & Nama lengkap karyawan atau tamu. \\
+        \hline
+        userType & Enum & Jenis pengguna (normal, visitor, atau blackList). \\
+        \hline
+        gender & Enum & Jenis kelamin pengguna (male, female, unknown). \\
+        \hline
+        validEnable & Boolean & Status keaktifan akun pada terminal gerbang. \\
+        \hline
+        validBeginTime & DateTime & Batas awal waktu validitas akses. \\
+        \hline
+        validEndTime & DateTime & Batas akhir waktu validitas akses. \\
+        \hline
+        photo\_path & VarChar(255) & Jalur penyimpanan file foto profil karyawan di server. \\
+        \hline
+    \end{tabular}
+\end{table}

@@ -1,0 +1,14 @@
+\begin{table}[H]
+    \centering
+    \caption{Rancangan Kanal Komunikasi \textit{Real-time} (Socket.IO)}
+    \label{tab:api_websocket}
+    \begin{tabular}{|l|c|p{8cm}|}
+        \hline
+        \textbf{Nama Event} & \textbf{Arah} & \textit{Keterangan} \\
+        \hline
+        events\_updated & Server $\rightarrow$ Client & Notifikasi pemicu penyegaran otomatis pada tabel log dan statistik dashboard. \\
+        \hline
+        gate\_status\_updated & Server $\rightarrow$ Client & Pengiriman status konektivitas (\textit{online/offline}) terbaru dari setiap gerbang. \\
+        \hline
+    \end{tabular}
+\end{table}

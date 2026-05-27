@@ -1,0 +1,23 @@
+\begin{table}[H]
+    \centering
+    \caption{Matriks Keputusan Pemilihan Asynchronous Sync Engine}
+    \label{tab:matriks_sync_engine}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Kriteria} & \textbf{Bobot} & \textbf{RabbitMQ} & \textbf{Kafka} & \textbf{Cron Job} \\
+        \hline
+        Skalabilitas Data & 30\% & 5 & 5 & 3 \\
+        \hline
+        \textit{Low Latency} & 30\% & 5 & 4 & 4 \\
+        \hline
+        Kemudahan Ops & 20\% & 3 & 2 & 5 \\
+        \hline
+        Efisiensi Infrastruktur & 20\% & 3 & 2 & 5 \\
+        \hline
+        \textbf{Total Skor} & \textbf{100\%} & \textbf{4.20} & \textbf{3.70} & \textbf{4.10}* \\
+        \hline
+    \end{tabular}
+    \begin{flushleft}
+        \small *Dipilih demi kesederhanaan sistem pada lingkungan lokal IIP.
+    \end{flushleft}
+\end{table}

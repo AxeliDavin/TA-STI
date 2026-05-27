@@ -1,0 +1,18 @@
+\begin{table}[H]
+    \centering
+    \caption{Kebutuhan Non-Fungsional Sistem}
+    \label{tab:kebutuhan_nonfungsional_sistem}
+    \begin{tabular}{|c|l|p{9cm}|}
+        \hline
+        \textbf{ID} & \textbf{Parameter} & \textbf{Deskripsi Kebutuhan Non-Fungsional} \\
+        \hline
+        KNF-01 & Integritas Data & Transmisi sinkronisasi data harus memiliki tingkat kehilangan (\textit{data loss rate}) mendekati 0\% untuk menjamin konsistensi data presensi harian. \\
+        \hline
+        KNF-02 & Keamanan & Komunikasi data (API) wajib menggunakan protokol standar (HTTP/ISAPI) dengan metode perlindungan kredensial (\textit{Digest Authentication}). \\
+        \hline
+        KNF-03 & Auditabilitas & Sistem harus mengakomodasi penyimpanan data visual (\textit{snapshot}) untuk setiap rekam kejadian akses secara utuh guna memfasilitasi validasi akurasi dan audit sistem yang komprehensif. \\
+        \hline
+        KNF-04 & Aksesibilitas & Aplikasi \textit{dashboard} harus dapat diakses secara fleksibel menggunakan peramban web standar melalui jaringan lokal gedung. \\
+        \hline
+    \end{tabular}
+\end{table}

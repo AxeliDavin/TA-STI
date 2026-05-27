@@ -1,0 +1,20 @@
+\begin{table}[H]
+    \centering
+    \caption{Kamus Data Tabel \textit{account}}
+    \label{tab:kamus_account}
+    \begin{tabular}{|l|l|p{8cm}|}
+        \hline
+        \textbf{Nama Kolom} & \textbf{Tipe Data} & \textbf{Keterangan} \\
+        \hline
+        id & UUID & Identifier unik internal akun administrator (Primary Key). \\
+        \hline
+        name & VarChar(128) & Nama lengkap administrator sistem. \\
+        \hline
+        username & VarChar(64) & Nama pengguna untuk masuk ke \textit{dashboard} (Unique). \\
+        \hline
+        password & VarChar(255) & Kata sandi akun (disimpan menggunakan algoritma \textit{hashing} bcrypt). \\
+        \hline
+        createdAt & DateTime & Stempel waktu pembuatan akun. \\
+        \hline
+    \end{tabular}
+\end{table}

@@ -1,0 +1,34 @@
+\begin{table}[H]
+    \centering
+    \caption{Rancangan Titik Akhir (\textit{Endpoint}) RESTful API}
+    \label{tab:api_restful}
+    \begin{tabular}{|l|c|l|p{6cm}|}
+        \hline
+        \textbf{Endpoint} & \textbf{Metode} & \textbf{Akses} & \textbf{Fungsi} \\
+        \hline
+        /auth/login & POST & Publik & Otentikasi administrator dan pemberian token JWT. \\
+        \hline
+        /auth/profile & GET & Private & Mengambil metadata profil administrator yang sedang masuk. \\
+        \hline
+        /employees & GET & Private & Mengambil daftar seluruh profil karyawan dari basis data. \\
+        \hline
+        /employees/register & POST & Private & Mendaftarkan subjek baru beserta pengunggahan foto profil. \\
+        \hline
+        /employees/:id & PATCH & Private & Memperbarui informasi profil karyawan tertentu. \\
+        \hline
+        /employees/:id & DELETE & Private & Menghapus data karyawan secara atomik (DB dan Hardware). \\
+        \hline
+        /statistics/karyawan & GET & Private & Mengambil data statistik kehadiran dan grafik tren harian. \\
+        \hline
+        /statistics/karyawan/logs & GET & Private & Mengambil data riwayat pergerakan secara terpaginasi. \\
+        \hline
+        /statistics/karyawan/export & GET & Private & Melakukan ekstraksi data kehadiran ke dalam format CSV. \\
+        \hline
+        /gate-monitor/status & GET & Private & Memantau status kesehatan koneksi seluruh terminal gerbang. \\
+        \hline
+        /gate-control/:id/command & POST & Private & Mengirimkan instruksi kendali manual (buka/tutup) ke pintu gerbang. \\
+        \hline
+        /uploads/:folder/:file & GET & Private & Mengambil aliran data biner foto profil atau bukti visual anomali. \\
+        \hline
+    \end{tabular}
+\end{table}

@@ -1,0 +1,20 @@
+\begin{table}[H]
+    \centering
+    \caption{Perbandingan Fitur Sistem Eksisting vs Sistem yang Diusulkan}
+    \label{tab:perbandingan_sistem}
+    \begin{tabular}{|l|p{6cm}|p{6cm}|}
+        \hline
+        \textbf{Aspek} & \textbf{Sistem Eksisting (iVMS-4200)} & \textbf{Sistem yang Diusulkan} \\
+        \hline
+        Aksesibilitas & Terbatas hanya pada satu PC lokal di area lobi. & Fleksibel via peramban web di seluruh jaringan gedung. \\
+        \hline
+        Sinkronisasi Data & Bergantung pada proses manual atau tarikan otomatis aplikasi vendor. & Otomatis dan berkesinambungan menggunakan algoritma \textit{Mark \& Sweep}. \\
+        \hline
+        Penyimpanan Log & Terisolasi dalam basis data lokal PC Resepsionis. & Terpusat dalam basis data PostgreSQL untuk agregasi BGC. \\
+        \hline
+        Investigasi Anomali & Memerlukan pengecekan manual pada layar terminal atau PC lobi. & Otomatis menyajikan foto \textit{snapshot} wajah pada \textit{dashboard} admin. \\
+        \hline
+        Keamanan Siber & Bergantung sepenuhnya pada keamanan PC lokal. & Dilindungi oleh lapisan \textit{Reverse Proxy} dan otentikasi terpusat. \\
+        \hline
+    \end{tabular}
+\end{table}
