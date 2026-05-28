@@ -1,0 +1,18 @@
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=bash, caption={Logika Inisialisasi Data Gerbang pada \texttt{seed-gate.ts}}, label={lst:seed_logic}, frame=single, captionpos=t]
+async function main() {
+  // Inisialisasi Gerbang Lobi 1
+  const gate1 = await prisma.gate.create({
+    data: {
+      device_id: '1',
+      name: 'Lobi Jalur 1 - Masuk',
+      ip_address: "192.168.1.xxx", // IP disamarkan demi keamanan
+      username: "admin_username",
+      password: "password_rahasia",
+      direction: 'IN'
+    },
+  });
+  console.log(`Gerbang ${gate1.name} berhasil didaftarkan.`);
+}
+\end{lstlisting}
+\end{minipage}

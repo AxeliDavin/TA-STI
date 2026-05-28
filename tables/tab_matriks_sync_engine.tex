@@ -1,23 +1,16 @@
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
-    \caption{Matriks Keputusan Pemilihan Asynchronous Sync Engine}
+    \caption{Matriks Keputusan Pemilihan Mekanisme Sinkronisasi Data}
     \label{tab:matriks_sync_engine}
-    \begin{tabular}{|l|c|c|c|c|}
+    \begin{tabularx}{\textwidth}{|l|X|X|}
         \hline
-        \textbf{Kriteria} & \textbf{Bobot} & \textbf{RabbitMQ} & \textbf{Kafka} & \textbf{Cron Job} \\
+        \textbf{Solusi} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
         \hline
-        Skalabilitas Data & 30\% & 5 & 5 & 3 \\
+        RabbitMQ & Mendukung mekanisme \textit{retry} dan sistem \textit{routing} pesan yang fleksibel, sangat efektif untuk menangani proses asinkron yang membutuhkan keandalan pengiriman data. & Memerlukan instalasi dan pengelolaan \textit{service message broker} tambahan, serta menambah kompleksitas arsitektur dibandingkan solusi bawaan sistem operasi. \\
         \hline
-        \textit{Low Latency} & 30\% & 5 & 4 & 4 \\
+        Apache Kafka & Dirancang untuk \textit{streaming} data bervolume besar dengan tingkat \textit{throughput} yang sangat tinggi serta memiliki toleransi kesalahan (\textit{fault tolerance}) yang superior. & Prosedur instalasi dan pemeliharaan infrastruktur sangat kompleks serta membutuhkan alokasi sumber daya server yang signifikan. \\
         \hline
-        Kemudahan Ops & 20\% & 3 & 2 & 5 \\
+        Cron Job & Sangat efisien karena merupakan fitur bawaan sistem operasi, ringan, dan tidak memerlukan dependensi eksternal. Sangat ideal untuk kebutuhan \textit{batch processing} atau sinkronisasi berkala. & Tidak bersifat \textit{real-time} (bergantung pada interval penjadwalan) dan memiliki keterbatasan dalam pemantauan otomatis jika terjadi kegagalan proses tanpa integrasi \textit{tooling} tambahan. \\
         \hline
-        Efisiensi Infrastruktur & 20\% & 3 & 2 & 5 \\
-        \hline
-        \textbf{Total Skor} & \textbf{100\%} & \textbf{4.20} & \textbf{3.70} & \textbf{4.10}* \\
-        \hline
-    \end{tabular}
-    \begin{flushleft}
-        \small *Dipilih demi kesederhanaan sistem pada lingkungan lokal IIP.
-    \end{flushleft}
+    \end{tabularx}
 \end{table}

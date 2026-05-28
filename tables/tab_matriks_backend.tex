@@ -1,20 +1,16 @@
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \caption{Matriks Keputusan Pemilihan Backend Dashboard Service}
     \label{tab:matriks_backend}
-    \begin{tabular}{|l|c|c|c|c|}
+    \begin{tabularx}{\textwidth}{|l|X|X|}
         \hline
-        \textbf{Kriteria} & \textbf{Bobot} & \textbf{NestJS} & \textbf{Spring Boot} & \textbf{Golang} \\
+        \textbf{Solusi} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
         \hline
-        \textit{I/O Performance} & 35\% & 5 & 4 & 5 \\
+        NestJS & Memiliki struktur arsitektur yang modular dan sangat terorganisir berbasis \textit{Object-Oriented Programming} (OOP) serta \textit{Dependency Injection}. Dukungan penuh terhadap TypeScript dan ketersediaan fitur \textit{gateway} khusus sangat memudahkan pengelolaan WebSocket pada sistem skala \textit{enterprise}. & Meskipun mendukung operasi asinkron, teknologi ini beroperasi pada model \textit{single-threaded}, sehingga proses komputasi berat yang intensif pada CPU berisiko menghambat (\textit{blocking}) kinerja \textit{event loop}. \\
         \hline
-        Modularitas & 25\% & 5 & 5 & 3 \\
+        Spring Boot & Menawarkan stabilitas tinggi untuk sistem skala besar dengan ekosistem yang sangat matang dan fitur keamanan yang ketat. Mendukung skalabilitas mumpuni melalui mekanisme \textit{multi-threading} bawaan yang efisien. & Memiliki kurva pembelajaran (\textit{learning curve}) yang cukup curam, siklus pengembangan cenderung lebih lambat, serta memerlukan alokasi memori yang signifikan dibandingkan Node.js atau Go. \\
         \hline
-        \textit{Development Speed} & 25\% & 5 & 3 & 4 \\
+        Golang Fiber & Memberikan performa eksekusi yang sangat tinggi dengan tingkat efisiensi penggunaan memori yang minimal, sangat cocok untuk layanan dengan kebutuhan konkurensi tinggi. & Ketersediaan pustaka (\textit{library}) dan dukungan komunitas pihak ketiga belum seluas ekosistem Node.js atau Java. \\
         \hline
-        Ekosistem Library IoT & 15\% & 4 & 4 & 3 \\
-        \hline
-        \textbf{Total Skor} & \textbf{100\%} & \textbf{4.90} & \textbf{4.00} & \textbf{4.05} \\
-        \hline
-    \end{tabular}
+    \end{tabularx}
 \end{table}

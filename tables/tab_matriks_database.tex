@@ -1,20 +1,16 @@
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
-    \caption{Matriks Keputusan Pemilihan Database BMS}
+    \caption{Matriks Keputusan Pemilihan Sistem Manajemen Basis Data}
     \label{tab:matriks_database}
-    \begin{tabular}{|l|c|c|c|c|}
+    \begin{tabularx}{\textwidth}{|l|X|X|}
         \hline
-        \textbf{Kriteria} & \textbf{Bobot} & \textbf{PostgreSQL} & \textbf{MySQL} & \textbf{MongoDB} \\
+        \textbf{Solusi} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
         \hline
-        Integritas Data (ACID) & 40\% & 5 & 4 & 2 \\
+        PostgreSQL & Menjamin konsistensi data yang tinggi dan mendukung kueri relasional yang kompleks. Memiliki fitur analitik serta mekanisme \textit{indexing} yang sangat mumpuni untuk pengelolaan basis data skala besar. & Prosedur konfigurasi dan optimasi awal relatif lebih kompleks dibandingkan dengan MySQL. \\
         \hline
-        Fleksibilitas Skema & 20\% & 3 & 3 & 5 \\
+        MySQL & Memiliki tingkat kemudahan penggunaan yang baik, performa yang stabil untuk aplikasi umum, serta dukungan komunitas yang sangat luas. & Kapabilitas analitik dan fitur kueri tingkat lanjut (\textit{advanced query}) tidak sekomprehensif yang dimiliki oleh PostgreSQL. \\
         \hline
-        Performa Query Log & 20\% & 5 & 4 & 4 \\
+        MongoDB & Menawarkan fleksibilitas tinggi untuk skema data semi-terstruktur serta mendukung skalabilitas horizontal yang efisien melalui mekanisme \textit{sharding}. & Kurang optimal untuk menangani relasi data yang sangat kompleks serta membutuhkan manajemen khusus untuk menjamin konsistensi transaksi tingkat tinggi. \\
         \hline
-        Keamanan & 20\% & 5 & 4 & 4 \\
-        \hline
-        \textbf{Total Skor} & \textbf{100\%} & \textbf{4.60} & \textbf{3.80} & \textbf{3.40} \\
-        \hline
-    \end{tabular}
+    \end{tabularx}
 \end{table}

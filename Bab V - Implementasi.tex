@@ -2,7 +2,7 @@
 % BAB V IMPLEMENTASI
 % ==========================================
 \cleardoublepage
-\chapter{IMPLEMENTASI}
+\chapter{IMPLEMENTASI SISTEM MANAJEMEN KARYAWAN TERPUSAT}
 \label{chap:implementasi}
 
 Bab ini menjabarkan realisasi nyata dari rancangan sistem yang telah disusun pada Bab IV. Penjelasan implementasi difokuskan pada perwujudan kode sumber (\textit{source code}) dari komponen utama \textit{middleware}, konfigurasi infrastruktur, realisasi basis data, serta antarmuka sistem yang telah berfungsi. Untuk menjaga keterbacaan dokumen, cuplikan kode yang ditampilkan pada bab ini difokuskan pada logika inti, sementara kode sumber secara lengkap dilampirkan pada bagian Lampiran.
@@ -15,18 +15,18 @@ Sistem ini diimplementasikan dan diuji pada dua jenis perangkat keras utama: per
 
 \begin{enumerate}
     \item Perangkat Komputasi Server: Pengembangan dan eksekusi layanan \textit{middleware} dilakukan pada perangkat komputer dengan spesifikasi minimum:
-    \begin{itemize}
-        \item Prosesor: Minimum setara Intel Core i5 / AMD Ryzen 5 generasi terkini.
+    \begin{enumerate}
+        \item Prosesor : Minimum setara Intel Core i5 / AMD Ryzen 5 generasi terkini.
         \item Memori (RAM): 8 GB (direkomendasikan 16 GB untuk mendukung beban operasional wadah \textit{Docker}).
         \item Penyimpanan: \textit{Solid State Drive} (SSD) dengan ruang kosong minimal 50 GB.
         \item Konektivitas: \textit{Ethernet} (LAN) untuk komunikasi berlatensi rendah dengan perangkat terminal.
-    \end{itemize}
+    \end{enumerate}
     \item Terminal Biometrik: Perangkat fisik yang menjadi sumber data log dan pengelola kendali pintu gerbang adalah terminal pengenalan wajah dari vendor Hikvision, dengan spesifikasi representatif:
-    \begin{itemize}
+    \begin{enumerate}
         \item Tipe Perangkat: Hikvision Face Recognition Terminal (seri representatif: DS-K1T342MFX atau setara).
         \item Versi \textit{Firmware}: V4.38.0 (atau versi V4.x yang kompatibel dengan perintah dasar \textit{ISAPI}).
         \item Konektivitas: Terhubung pada jaringan LAN lokal (satu \textit{subnet} dengan server).
-    \end{itemize}
+    \end{enumerate}
 \end{enumerate}
 
 \subsection{Spesifikasi Perangkat Lunak (\textit{Software})}
@@ -45,36 +45,12 @@ Aplikasi ini dibangun menggunakan arsitektur \textit{JavaScript/TypeScript} di s
 \subsection{Manajemen Konfigurasi Sistem}
 Untuk mendukung keamanan dan fleksibilitas, seluruh parameter sensitif sistem tidak ditulis langsung ke dalam kode sumber (\textit{hardcoded}), melainkan dikelola melalui file konfigurasi \textit{Environment Variables} (\texttt{.env}). Parameter ini mencakup kredensial akses basis data, alamat IP titik kumpul ISAPI, dan kunci rahasia kriptografi. Cuplikan kode pada Listing \ref{lst:env_config} menampilkan contoh struktur konfigurasi \textit{environment} pada lingkungan server.
 
-\begin{lstlisting}[language=bash, caption={Contoh Struktur File Konfigurasi \texttt{.env}}, label={lst:env_config}]
-# Kredensial Basis Data (Diakses oleh Prisma ORM)
-DATABASE_URL="postgresql://db_admin:password_rahasia@localhost:5433/smartgate_db"
-
-# Kunci Keamanan Token (Diakses oleh Modul Otentikasi)
-JWT_SECRET="kunci_rahasia_jwt_anda"
-
-# Konfigurasi Konektivitas Internal
-PORT=3001
-NEXT_PUBLIC_API_URL="http://localhost:3001"
-\end{lstlisting}
+\input{listings/env-config.tex}
 
 \subsection{Implementasi Kontainerisasi Basis Data}
 Sistem menggunakan \textit{Docker Compose} untuk mengelola layanan basis data secara terisolasi. Penggunaan kontainer memastikan bahwa lingkungan basis data tetap konsisten terlepas dari mesin tempat sistem dijalankan. Listing \ref{lst:docker_config} menyajikan konfigurasi layanan PostgreSQL yang digunakan dalam sistem.
 
-\begin{lstlisting}[language=bash, caption={Konfigurasi Layanan Basis Data pada \texttt{docker-compose.yml}}, label={lst:docker_config}]
-services:
-  postgres:
-    image: postgres:15
-    container_name: smart_gate_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: db_admin
-      POSTGRES_PASSWORD: password_rahasia
-      POSTGRES_DB: smart_gate_db
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-\end{lstlisting}
+\input{listings/docker-config.tex}
 
 \subsection{Struktur Modular Kode Sumber}
 Implementasi kode sumber pada sisi peladen (\textit{backend}) diatur ke dalam struktur modular guna menerapkan prinsip pemisahan tanggung jawab. Direktori utama pada sistem dikelola sebagai berikut:
@@ -83,7 +59,6 @@ Implementasi kode sumber pada sisi peladen (\textit{backend}) diatur ke dalam st
     \item src/auth: Mengelola logika keamanan, strategi \textit{passport}, dan penerbitan token JWT.
     \item src/employees: Mengelola logika manajemen data subjek karyawan dan integrasi biometrik wajah.
     \item src/cron: Berisi layanan penjadwalan otomatis untuk pemantauan terminal (\textit{Heartbeat}) dan penarikan log.
-    \item src/etl: Mengelola logika transformasi data log mentah menjadi informasi kehadiran harian.
     \item src/shared/device-api: Bertindak sebagai jembatan komunikasi (\textit{API Wrapper}) protokol ISAPI.
 \end{enumerate}
 
@@ -104,121 +79,36 @@ Implementasi basis data pada sistem ini diwujudkan melalui pendefinisian skema r
 \subsection{Realisasi Skema Relasional (\textit{Prisma Schema})}
 Seluruh entitas yang telah dirancang pada Bab IV diimplementasikan ke dalam file konfigurasi \texttt{schema.prisma}. Implementasi ini tidak hanya mencakup penyimpanan data mentah dari perangkat keras, tetapi juga tabel pendukung untuk logika bisnis tingkat lanjut seperti pemantauan status kehadiran. Cuplikan kode pada Listing \ref{lst:prisma_schema} menunjukkan implementasi tabel utama dan relasinya.
 
-\begin{lstlisting}[language=bash, caption={Implementasi Skema Tabel Utama pada \texttt{schema.prisma}}, label={lst:prisma_schema}]
-// Tabel Subjek Akses (Person)
-model person {
-  employeeNo      String      @id @db.VarChar(32)
-  name            String      @db.VarChar(128)
-  userType        UserType    @default(normal)
-  last_synced_at  DateTime    @default(now())
-  access_records  access_record[]
-  visits          visit[]
-}
+\input{listings/prisma-schema.tex}
 
-// Tabel Konfigurasi Perangkat (Gate)
-model gate {
-  id              String      @id @default(uuid())
-  device_id       String?     @unique
-  name            String      @db.VarChar(128)
-  ip_address      String      @db.VarChar(64)
-  username        String      @db.VarChar(64)
-  password        String      @db.VarChar(128)
-  direction       GateDirection @default(IN)
-  last_synced_at  DateTime?
-  access_records  access_record[]
-}
+Penerapan skema ini memperhatikan batasan teknis dari perangkat keras, seperti penggunaan tipe data \textit{VarChar(32)} pada \texttt{employeeNo} yang disesuaikan dengan limitasi protokol ISAPI Hikvision.
 
-// Tabel Log Kejadian Mentah (Access Record)
-model access_record {
-  serialNo           String      @id @db.VarChar(128)
-  time               DateTime
-  person_id          String?     @db.VarChar(32)
-  person             person?     @relation(fields: [person_id], references: [employeeNo])
-  gate_id            String?
-  gate               gate?       @relation(fields: [gate_id], references: [id])
-  
-  @@index([time])
-  @@index([person_id])
-}
-
-// Tabel Status Kehadiran (Hasil Agregasi/ETL)
-model visit {
-  id         String    @id @default(uuid())
-  person_id  String    @db.VarChar(32)
-  person     person    @relation(fields: [person_id], references: [employeeNo])
-  entry_time DateTime? 
-  exit_time  DateTime? 
-  status     VisitStatus @default(ACTIVE)
-
-  @@index([person_id])
-  @@index([exit_time]) 
-}
-\end{lstlisting}
-
-Penerapan skema ini memperhatikan batasan teknis dari perangkat keras, seperti penggunaan tipe data \textit{VarChar(32)} pada \texttt{employeeNo} yang disesuaikan dengan limitasi protokol ISAPI Hikvision. Selain itu, tabel \texttt{visit} diimplementasikan sebagai hasil proses pengolahan data untuk melacak durasi kunjungan dan status keberadaan subjek di dalam gedung.
-
-Skema basis data tersebut juga dilengkapi dengan indeks pada kolom-lowm yang sering menjadi kriteria pencarian, seperti waktu kejadian (\texttt{time}) dan identitas subjek (\texttt{person\_id}). Hal ini ditujukan untuk menjaga performa kueri tetap stabil seiring dengan bertambahnya volume data transaksi akses.
+Skema basis data tersebut juga dilengkapi dengan indeks pada kolom-kolom yang sering menjadi kriteria pencarian, seperti waktu kejadian (\texttt{time}) dan identitas subjek (\texttt{person\_id}). Hal ini ditujukan untuk menjaga performa kueri tetap stabil seiring dengan bertambahnya volume data transaksi akses.
 
 Selain itu, sistem mengimplementasikan mekanisme penambahan data yang memastikan integritas relasional antara log kejadian dan data subjek. Jika terdapat log akses dengan ID yang belum tersinkronisasi, sistem tetap menyimpan log tersebut dengan mengizinkan nilai kosong pada relasi identitas agar data riwayat tetap tersimpan secara utuh.
 
-\subsection{Prosedur Inisialisasi Data (\textit{Database Seeding})}
+\subsection{Prosedur Inisialisasi Data (Inisialisasi Basis Data)}
 Sistem melakukan prosedur \textit{seeding} untuk memasukkan data awal konfigurasi gerbang menggunakan skrip \textit{TypeScript} (\texttt{seed-gate.ts}). Proses ini mendaftarkan identitas perangkat gerbang, alamat IP, kredensial akses, serta arah gerbang (\texttt{IN} atau \texttt{OUT}) ke dalam basis data. Cuplikan logika inisialisasi ditampilkan pada Listing \ref{lst:seed_logic}.
 
-\begin{lstlisting}[language=bash, caption={Logika Inisialisasi Data Gerbang pada \texttt{seed-gate.ts}}, label={lst:seed_logic}]
-async function main() {
-  // Inisialisasi Gerbang Lobi 1
-  const gate1 = await prisma.gate.create({
-    data: {
-      device_id: '1',
-      name: 'Lobi Jalur 1 - Masuk',
-      ip_address: "192.168.1.xxx", // IP disamarkan demi keamanan
-      username: "admin_username",
-      password: "password_rahasia",
-      direction: 'IN'
-    },
-  });
-  console.log(`Gerbang ${gate1.name} berhasil didaftarkan.`);
-}
-\end{lstlisting}
+\input{listings/seed-logic.tex}
 
 \subsection{Implementasi Aturan Bisnis Berbasis Status (\textit{Enums})}
 Sistem menerapkan tipe data terstruktur berupa \textit{Enum} untuk menjamin konsistensi nilai status pada basis data. Listing \ref{lst:prisma_enums} menampilkan definisi status yang digunakan untuk kontrol akses.
 
-\begin{lstlisting}[language=bash, caption={Definisi \textit{Enums} pada \texttt{schema.prisma}}, label={lst:prisma_enums}]
-enum GateDirection {
-  IN
-  OUT
-}
+\input{listings/prisma-enums.tex}
 
-enum VisitStatus {
-  ACTIVE
-  COMPLETED
-  EMERGENCY
-  EVACUATED
-  EXPIRED_SYSTEM
-}
-\end{lstlisting}
-
-Implementasi \texttt{VisitStatus} tidak hanya mengakomodasi pencatatan akses reguler, tetapi juga dirancang untuk mendukung integrasi sistem secara keseluruhan. Status \texttt{ACTIVE} dan \texttt{COMPLETED} dikelola penuh oleh modul manajemen akses ini untuk agregasi log harian. Sementara itu, status \texttt{EMERGENCY} dan \texttt{EVACUATED} merupakan \textit{shared state} (status bersama) yang dipersiapkan agar dapat dipicu dan dikelola oleh Modul Protokol Darurat (dibahas pada dokumen Tugas Akhir terpisah).
+Penerapan \texttt{UserType} memungkinkan sistem untuk melakukan kategorisasi subjek akses secara terstruktur, membedakan antara karyawan tetap (\texttt{normal}), pengunjung (\texttt{visitor}), dan subjek dalam daftar blokir (\texttt{blackList}) untuk keperluan otorisasi. Sementara itu, \texttt{GateDirection} berperan sebagai parameter fundamental dalam mendefinisikan peran fisik terminal sebagai gerbang masuk (\texttt{IN}) atau keluar (\texttt{OUT}), yang menjadi basis utama bagi algoritma pemrosesan riwayat pergerakan penghuni secara otomatis.
 
 \subsection{Realisasi Tabel Akun Administratif}
 Sistem mengimplementasikan tabel \texttt{account} sebagai lapisan pendukung untuk manajemen pengguna \textit{dashboard}. Tabel ini menggunakan \textit{Universally Unique Identifier} (UUID) sebagai kunci primer. Cuplikan skema akun pada \texttt{schema.prisma} ditampilkan pada Listing \ref{lst:prisma_account}.
 
-\begin{lstlisting}[language=bash, caption={Implementasi Tabel Akun pada \texttt{schema.prisma}}, label={lst:prisma_account}]
-model account {
-  id              String      @id @default(uuid())
-  name            String      @db.VarChar(128)
-  username        String      @unique @db.VarChar(64)
-  password        String      @db.VarChar(255)
-  createdAt       DateTime    @default(now())
-}
-\end{lstlisting}
+\input{listings/prisma-account.tex}
 
 \subsection{Strategi Penyimpanan Citra}
 Sistem memisahkan penyimpanan antara data teks dan data foto. Basis data hanya menyimpan lokasi file (\textit{file path}) dalam bentuk \textit{string} pada tabel \texttt{person} dan \texttt{access\_record}. File fisik foto disimpan pada sistem berkas server di dalam direktori \texttt{uploads/}, sehingga proses pembacaan data log tidak terhambat oleh beban data biner yang besar.
 
 \subsection{Manajemen Migrasi Basis Data}
-Sistem menggunakan \textit{Prisma Migrate} untuk merealisasikan struktur tabel dari file konfigurasi ke dalam database PostgreSQL. Melalui perintah \texttt{npx prisma migrate dev}, sistem menghasilkan skrip SQL secara otomatis untuk melakukan sinkronisasi struktur tabel. Hal ini menjamin konsistensi skema basis data pada lingkungan pengembangan dan implementasi.
+Sistem menggunakan \textit{Prisma Migrate} untuk merealisasikan struktur tabel dari file konfigurasi ke dalam basis data PostgreSQL. Melalui perintah \texttt{npx prisma migrate dev}, sistem menghasilkan skrip SQL secara otomatis untuk melakukan sinkronisasi struktur tabel. Hal ini menjamin konsistensi skema basis data pada lingkungan pengembangan dan implementasi.
 
 \subsection{Implementasi Sinkronisasi Zona Waktu}
 Sistem dikonfigurasi untuk menyimpan seluruh data waktu dalam format \textit{Universal Time Coordinated} (UTC). Sistem melakukan konversi stempel waktu dari format lokal perangkat keras (WIB) ke format UTC sebelum disimpan ke dalam basis data. Langkah ini dilakukan untuk menjamin akurasi data saat dilakukan penghitungan durasi kunjungan karyawan.
@@ -231,51 +121,29 @@ Komunikasi antara peladen dengan terminal biometrik dienkapsulasi menggunakan pe
 
 Beberapa penanganan spesifik protokol yang diimplementasikan meliputi:
 \begin{enumerate}
-    \item \textbf{Mekanisme Penanganan Otentikasi Ulang Otomatis:} Sistem secara proaktif menangani respon HTTP 401 \textit{Unauthorized} dengan mengekstrak parameter \textit{nonce}, \textit{realm}, dan \textit{qop} untuk menghitung respons kriptografi MD5 sebelum melakukan permintaan ulang secara otomatis. Mekanisme ini mencakup kemampuan pemulihan koneksi secara mandiri apabila terjadi ketidaksinkronan parameter \textit{nonce} atau masa berlaku sesi komunikasi dengan perangkat keras.
-    \item \textbf{Penarikan Data Berhalaman (\textit{Pagination}):} Untuk mengatasi batasan \textit{buffer} memori perangkat keras, sistem memodulasi penarikan log melalui struktur iteratif yang menyesuaikan parameter batas antrean, sehingga seluruh volume data log terserap tanpa ada yang terlewat.
-    \item \textbf{Penyusunan Struktur Data Biner Manual:} Menghadapi limitasi \textit{firmware} Hikvision dalam membaca pemisah (\textit{boundary}) pengunggahan data biner, \textit{middleware} merangkai struktur \textit{multipart} secara manual pada level \textit{byte} guna menjamin keberhasilan sinkronisasi foto wajah.
+    \item Mekanisme Penanganan Otentikasi Ulang Otomatis: Sistem secara proaktif menangani respon HTTP 401 \textit{Unauthorized} dengan mengekstrak parameter \textit{nonce}, \textit{realm}, dan \textit{qop} untuk menghitung respons kriptografi MD5 sebelum melakukan permintaan ulang secara otomatis. Mekanisme ini mencakup kemampuan pemulihan koneksi secara mandiri apabila terjadi ketidaksinkronan parameter \textit{nonce} atau masa berlaku sesi komunikasi dengan perangkat keras.
+    \item Penarikan Data Berhalaman (\textit{Pagination}): Untuk mengatasi batasan \textit{buffer} memori perangkat keras, sistem memodulasi penarikan log melalui struktur iteratif yang menyesuaikan parameter batas antrean, sehingga seluruh volume data log terserap tanpa ada yang terlewat.
+    \item Penyusunan Struktur Data Biner Manual: Menghadapi limitasi \textit{firmware} Hikvision dalam membaca pemisah (\textit{boundary}) pengunggahan data biner, \textit{middleware} merangkai struktur \textit{multipart} secara manual pada level \textit{byte} guna menjamin keberhasilan sinkronisasi foto wajah.
 \end{enumerate}
 
-\begin{lstlisting}[language=bash, caption={Penyusunan Struktur Data Biner Manual}, label={lst:isapi_multipart}]
-const boundary = `----HikvisionISAPIBoundary${crypto.randomBytes(4).toString('hex')}`;
-
-// Penyusunan struktur manual untuk data wajah
-const part1 = 
-  `--${boundary}\r\n` +
-  `Content-Disposition: form-data; name="faceDataRecord"\r\n\r\n` + 
-  `${jsonString}\r\n`;
-
-const part2Headers = 
-  `--${boundary}\r\n` +
-  `Content-Disposition: form-data; name="img"; filename="face.jpg"\r\n` +
-  `Content-Type: image/jpeg\r\n\r\n`;
-\end{lstlisting}
+\input{listings/isapi-multipart.tex}
 
 \subsection{Implementasi Mekanisme Sinkronisasi}
-Sinkronisasi identitas biometrik dan penarikan log dikelola oleh \texttt{CronService}. Sistem menerapkan strategi koordinasi tugas untuk menyeimbangkan performa dan stabilitas jaringan. Proses penarikan log dioperasikan secara paralel terhadap seluruh terminal secara serentak guna menjamin efisiensi waktu eksekusi. Sementara itu, proses pendaftaran karyawan baru dilakukan secara berurutan guna menjaga stabilitas lebar pita (\textit{bandwidth}) jaringan lokal saat melakukan pengiriman data biometrik yang berukuran besar ke banyak terminal gerbang.
+Sinkronisasi identitas biometrik dan penarikan log dikelola oleh \texttt{CronService}. Sistem menerapkan strategi koordinasi tugas untuk menyeimbangkan performa dan stabilitas jaringan. Proses penarikan log dari gerbang beroperasi secara paralel (\textit{asynchronous concurrent}) guna menjamin efisiensi waktu eksekusi. Sebaliknya, proses distribusi data pendaftaran karyawan baru dilakukan melalui titik integrasi terminal untuk kemudian disinkronisasikan ke seluruh unit gerbang melalui ekosistem jaringan perangkat keras yang tersedia.
 
-Algoritma utama yang digunakan adalah \textit{Mark \& Sweep}, di mana sistem memperbarui stempel waktu pada fase penandaan, dilanjutkan dengan pembersihan identitas usang pada fase penyisiran sebagaimana ditunjukkan pada Listing \ref{lst:logic_sweep}. Dalam proses ini, sistem menerapkan strategi sinkronisasi pasif, di mana pemutakhiran data fisik pada basis data hanya dilakukan apabila terdeteksi adanya perubahan atribut identitas. Strategi ini ditujukan untuk mengurangi beban operasional pada peladen, dengan hanya memperbarui atribut \texttt{last\_synced\_at} sebagai penanda kesehatan sinkronisasi. Dalam pendaftaran identitas, sistem menerapkan logika penanganan konflik untuk memitigasi kendala memori perangkat serta mengakomodasi kondisi di mana pendaftaran tetap dianggap berhasil meskipun pengunggahan foto mengalami kegagalan sementara akibat latensi jaringan. Sistem menyimpan setiap identitas baru ke basis data server terlebih dahulu sebelum melakukan pengiriman data ke terminal biometrik. Pendekatan ini menjamin ketersediaan rekaman identitas sebagai acuan utama, termasuk penentuan masa berlaku akses yang secara otomatis ditetapkan hingga sepuluh tahun ke depan untuk meminimalisir beban administratif. Sistem mengirimkan pembaruan data secara serentak ke seluruh terminal gerbang guna menjamin kesamaan data di setiap titik akses gedung. Manajemen siklus hidup data dilengkapi dengan penghapusan terdistribusi tiga lapis: mencabut akses pada memori perangkat, menghapus aset foto di sistem berkas peladen, dan membersihkan rekaman basis data. Selain itu, sistem mendukung pemutakhiran identitas secara efisien melalui metode pembaruan parsial (\textit{partial update}), yang memungkinkan perubahan data administratif tanpa harus melakukan pengiriman ulang berkas biometrik. Sistem juga mengimplementasikan logika penapisan perangkat guna mengecualikan alamat IP tertentu yang bersifat percobaan, sehingga integritas sinkronisasi tetap terjaga dari gangguan data \textit{dummy}. Untuk menjamin tidak ada log yang terabaikan akibat fluktuasi jaringan, penarikan data menggunakan strategi jendela waktu mundur selama delapan jam. Integritas penyerapan log juga diperkuat melalui penyaringan data menggunakan nomor seri (\textit{serialNo}) unik guna mencegah terjadinya duplikasi rekaman riwayat akses pada basis data meskipun terjadi tumpang tindih siklus penarikan data.
+Algoritma utama yang digunakan adalah \textit{Mark \& Sweep}, di mana sistem memperbarui stempel waktu pada fase penandaan, dilanjutkan dengan pembersihan identitas usang pada fase penyisiran sebagaimana ditunjukkan pada Listing \ref{lst:logic_sweep}. Dalam pendaftaran identitas, sistem menerapkan logika dua tahap: sinkronisasi identitas tekstual terlebih dahulu, kemudian dilanjutkan dengan pengunggahan foto. Logika ini memungkinkan proses pendaftaran tetap dianggap berhasil di basis data peladen meskipun pengunggahan foto wajah mengalami kegagalan teknis sesaat pada perangkat keras. Sistem menyimpan setiap identitas baru ke basis data peladen sebagai acuan utama sebelum melakukan mengiriman data ke terminal. Manajemen siklus hidup data dilengkapi dengan prosedur penghapusan berlapis: mencabut akses pada memori perangkat, menghapus aset foto di sistem berkas peladen, dan membersihkan rekaman basis data. Selain itu, untuk menjamin tidak ada log yang terabaikan akibat fluktuasi jaringan, penarikan data menggunakan strategi jendela waktu mundur selama delapan jam. Integritas penyerapan log diperkuat melalui penyaringan data menggunakan nomor seri (\textit{serialNo}) unik guna mencegah terjadinya duplikasi rekaman riwayat akses pada basis data meskipun terjadi tumpang tindih siklus penarikan data.
 
-\begin{lstlisting}[language=bash, caption={Logika Pembersihan Data pada \texttt{CronService}}, label={lst:logic_sweep}]
-// Pembersihan identitas yang tidak ada di perangkat
-const { count: deletedCount } = await this.prisma.person.deleteMany({
-  where: { 
-    last_synced_at: { lt: syncStartTime },
-    access_records: { none: {} },
-    visits: { none: {} }
-  },
-});
-\end{lstlisting}
+\input{listings/logic-sweep.tex}
 
 \subsection{Implementasi Pemrosesan Log dan Agregasi}
-Transformasi log mentah menjadi informasi kehadiran dilakukan melalui mekanisme pengolahan data yang konsisten. Untuk menjamin stabilitas saat menangani volume transaksi yang masif, proses transformasi ini dilakukan secara bertahap dalam kelompok-kelompok kecil (\textit{batch processing}). Sistem membatasi antrean hingga 1.000 rekaman per siklus eksekusi, sehingga konsumsi sumber daya peladen tetap terkendali meskipun terjadi lonjakan aktivitas di area lobi. Hal ini memastikan bahwa perubahan status subjek---dari masuk (\texttt{ACTIVE}) hingga keluar (\texttt{COMPLETED})---berjalan secara akurat. Penentuan arah pergerakan dilakukan secara dinamis dengan merujuk pada konfigurasi atribut gerbang di basis data. Logika ini juga dirancang untuk menangani rekaman yatim, di mana apabila terdeteksi kejadian keluar tanpa adanya riwayat masuk sebelumnya, sistem secara otomatis menginisialisasi rekaman kunjungan dengan status \textit{completed} guna menjaga integritas laporan. Sistem melakukan pemetaan kejadian untuk menerjemahkan kode biner perangkat keras menjadi informasi tekstual yang informatif bagi pengguna. Sistem juga menerapkan validasi data berlapis melalui penggunaan objek transfer data. Sebelum data karyawan didistribusikan ke memori perangkat keras, peladen melakukan penyaringan input dan validasi tipe data secara ketat guna mencegah terjadinya anomali memori pada terminal biometrik. Implementasi ini diperkuat dengan strategi validasi awal pada lapisan pengendali untuk menjamin kelengkapan parameter wajib sebelum instruksi diproses lebih lanjut oleh lapisan basis data.
+Transformasi log mentah menjadi informasi kehadiran dilakukan melalui mekanisme pengolahan data yang konsisten. Untuk menjamin stabilitas saat menangani volume transaksi yang masif, proses transformasi ini dilakukan secara bertahap dalam kelompok-kelompok kecil (\textit{batch processing}). Sistem membatasi antrean hingga 1.000 rekaman per siklus eksekusi, sehingga konsumsi sumber daya peladen tetap terkendali meskipun terjadi lonjakan aktivitas di area lobi. Sistem melakukan pemetaan kejadian untuk menerjemahkan kode biner \textit{major/minor} perangkat keras menjadi informasi tekstual yang informatif bagi pengguna. Sistem juga menerapkan validasi data berlapis melalui penggunaan objek transfer data. Sebelum data karyawan didistribusikan ke memori perangkat keras, peladen melakukan penyaringan input dan validasi tipe data secara ketat guna mencegah terjadinya anomali memori pada terminal biometrik. Implementasi ini diperkuat dengan strategi validasi awal pada lapisan pengendali untuk menjamin kelengkapan parameter wajib sebelum instruksi diproses lebih lanjut oleh lapisan basis data.
 
 Pada tahap penyajian data, peladen memberlakukan penyaringan data yang ketat untuk menampilkan hanya entitas karyawan direktorat, lalu mengonstruksi matriks nilai nol pada jam yang tidak memiliki aktivitas akses untuk visualisasi grafik tren yang stabil. Untuk mendukung performa antarmuka pengguna, setiap respon API dilengkapi dengan manajemen informasi navigasi (\textit{total records} dan \textit{last page}) agar pergerakan tabel tetap ringan. Selain itu, sistem menyisipkan penanda \textit{Byte Order Mark} (BOM) pada modul ekstraksi laporan CSV guna menjamin kompatibilitas tampilan saat data dibuka melalui aplikasi pengolah angka eksternal.
 
 \subsection{Implementasi Komunikasi Real-time dan Observabilitas}
-Untuk mendiseminasikan status sistem dengan latensi minimal, infrastruktur peladen dilengkapi dengan jalur komunikasi data seketika (\textit{WebSocket}). Jalur ini diamankan menggunakan proses verifikasi token JWT serta kebijakan keamanan lintas asal (CORS) untuk membatasi interaksi API hanya pada domain dashboard resmi. Untuk mengoptimalkan performa, peladen menyimpan informasi pengguna pada sesi yang aktif selama durasi koneksi. Mekanisme ini meniadakan kebutuhan verifikasi token berulang pada setiap transmisi data, sehingga beban komputasi peladen berkurang saat menyebarkan pembaruan aktivitas lobi secara masif. Sebagai bagian dari penyampaian konten, sistem mengonfigurasi layanan penyajian berkas statis agar antarmuka pengguna dapat memuat foto profil dan foto anomali secara langsung dari sistem berkas peladen dengan latensi rendah. Infrastruktur visual ini dilengkapi dengan logika pembuatan direktori otomatis, di mana peladen secara mandiri menginisialisasi folder penyimpanan yang diperlukan saat pertama kali dijalankan untuk memastikan kesiapan operasional sistem.
+Untuk memberi status sistem dengan latensi minimal, infrastruktur peladen dilengkapi dengan jalur komunikasi data seketika (\textit{WebSocket}). Jalur ini diamankan menggunakan proses verifikasi token JWT serta kebijakan keamanan lintas asal (CORS) untuk membatasi interaksi API hanya pada domain dashboard resmi. Untuk mengoptimalkan performa, peladen menyimpan informasi pengguna pada sesi yang aktif selama durasi koneksi. Mekanisme ini meniadakan kebutuhan verifikasi token berulang pada setiap transmisi data, sehingga beban komputasi peladen berkurang saat menyebarkan pembaruan aktivitas lobi secara masif. Sebagai bagian dari penyampaian konten, sistem mengonfigurasi layanan penyajian berkas statis agar antarmuka pengguna dapat memuat foto anomali secara langsung dari sistem berkas peladen dengan latensi rendah. Infrastruktur visual ini dilengkapi dengan logika pembuatan direktori otomatis, di mana peladen secara mandiri menginisialisasi folder penyimpanan yang diperlukan saat pertama kali dijalankan untuk memastikan kesiapan operasional sistem.
 
-Fungsi pemantauan dijalankan secara periodik melalui mekanisme pemeriksaan kesehatan perangkat untuk menarik status konektivitas terminal secara instan. Untuk menjaga konsistensi data harian, peladen mengimplementasikan sinyal pengaturan ulang tengah malam (\textit{midnight reset signal}) yang memicu pembersihan status pada seluruh antarmuka pengguna setiap hari melalui transmisi data otomatis. Lapisan pemantauan diperkuat dengan layanan \textit{Logger} yang merekam seluruh siklus aktivitas sistem secara terstruktur. Hal ini memungkinkan administrator untuk memantau kesehatan aliran data dan melakukan pelacakan kendala secara presisi. Kemampuan sistem ini ditunjukkan saat mendeteksi akses ditolak, di mana sistem secara otomatis memicu pengunduhan foto bukti visual dari terminal biometrik dan mengirimkan foto tersebut ke antarmuka pengguna bersamaan dengan notifikasi peringatan.
+Fungsi pemantauan dijalankan secara periodik melalui mekanisme pemeriksaan status perangkat untuk menarik status konektivitas terminal secara instan. Untuk menjaga konsistensi data harian, peladen mengimplementasikan sinyal pengaturan ulang tengah malam (\textit{midnight reset signal}) yang memicu pembersihan status pada seluruh antarmuka pengguna setiap hari melalui transmisi data otomatis. Lapisan pemantauan diperkuat dengan layanan \textit{Logger} yang merekam seluruh siklus aktivitas sistem secara terstruktur. Hal ini memungkinkan administrator untuk memantau status aliran data dan melakukan pelacakan kendala secara presisi. Kemampuan sistem ini ditunjukkan saat mendeteksi akses ditolak, di mana sistem secara otomatis memicu pengunduhan foto bukti visual dari terminal biometrik dan mengirimkan foto tersebut ke antarmuka pengguna.
 
 \section{Implementasi Antarmuka Pengguna}
 Bagian ini menampilkan realisasi antarmuka manajemen berbasis web yang dibangun menggunakan kerangka kerja \textit{Next.js}. Antarmuka ini berfungsi sebagai pusat visualisasi data dan kendali operasional bagi petugas keamanan direktorat.
@@ -283,9 +151,11 @@ Bagian ini menampilkan realisasi antarmuka manajemen berbasis web yang dibangun 
 \subsection{Realisasi Halaman Pemantauan Karyawan}
 Halaman pemantauan utama diimplementasikan pada jalur \texttt{app/dashboard/kontrol-akses/karyawan/}. Halaman ini menyediakan visualisasi aktivitas akses gedung secara langsung. Antarmuka dashboard terdiri dari kartu statistik yang menyajikan informasi jumlah karyawan yang berada di dalam gedung, total subjek yang telah keluar, serta jumlah kejadian akses ditolak pada hari berjalan.
 
-Untuk memudahkan pemantauan pola trafik, sistem menampilkan grafik batang aktivitas per jam yang dibangun menggunakan kombinasi komponen \textit{React} dan kerangka kerja desain \textit{Tailwind CSS}. Grafik ini memperlihatkan beban penggunaan gerbang mulai dari pukul 00:00 hingga 23:00. Integrasi dengan jalur komunikasi data memungkinkan daftar riwayat akses pada halaman ini diperbarui secara otomatis setiap kali terdapat aktivitas baru di terminal gerbang tanpa mengharuskan pengguna memuat ulang halaman peramban. Antarmuka ini juga dilengkapi dengan indikator kesehatan perangkat biometrik. Melalui penanda visual berbasis warna pada daftar gerbang, petugas dapat memantau status konektivitas setiap terminal secara langsung, di mana perubahan status menjadi luring (\textit{offline}) akan memicu peringatan visual guna mempercepat tindakan pemeliharaan teknis. Selain itu, halaman ini menampilkan jam digital sistem yang berjalan secara \textit{real-time} sebagai acuan sinkronisasi waktu operasional bagi petugas keamanan.
+Untuk memudahkan pemantauan pola trafik, sistem menampilkan grafik batang aktivitas per jam yang dibangun menggunakan kombinasi komponen \textit{React} dan kerangka kerja desain \textit{Tailwind CSS}. Grafik ini memperlihatkan beban penggunaan gerbang mulai dari pukul 00:00 hingga 23:00. Integrasi dengan jalur komunikasi data memungkinkan daftar riwayat akses pada halaman ini diperbarui secara otomatis setiap kali terdapat aktivitas baru di terminal gerbang tanpa mengharuskan pengguna memuat ulang halaman peramban. Antarmuka ini juga dilengkapi dengan indikator status perangkat biometrik. Melalui penanda visual berbasis warna pada daftar gerbang, petugas dapat memantau status konektivitas setiap terminal secara langsung, di mana perubahan status menjadi luring (\textit{offline}) akan memicu peringatan visual guna mempercepat tindakan pemeliharaan teknis. Selain itu, halaman ini menampilkan jam digital sistem yang berjalan secara \textit{real-time} sebagai acuan sinkronisasi waktu operasional bagi petugas keamanan.
 
-\begin{figure}[H]
+Selain fungsi pemantauan \textit{real-time}, antarmuka ini menyediakan fitur audit historis melalui penyaringan rentang waktu. Operator dapat menentukan tanggal awal dan akhir untuk meninjau riwayat akses karyawan secara spesifik, guna mendukung kebutuhan investigasi insiden masa lalu. Hasil penyaringan tersebut kemudian dapat diekstraksi ke dalam format digital melalui fitur unduh laporan CSV yang telah terintegrasi, memudahkan proses pelaporan administratif tanpa ketergantungan pada akses langsung ke basis data peladen.
+
+\begin{figure}[t]
     \centering
     % \includegraphics[width=0.9\textwidth]{images/placeholder_dashboard.png}
     \caption{Antarmuka Halaman Pemantauan Karyawan \textit{Real-time}}
@@ -293,11 +163,11 @@ Untuk memudahkan pemantauan pola trafik, sistem menampilkan grafik batang aktivi
 \end{figure}
 
 \subsection{Realisasi Manajemen Data Karyawan}
-Implementasi pengelolaan data induk karyawan dilakukan pada halaman \texttt{app/dashboard/management/karyawan/}. Halaman ini memfasilitasi petugas dalam melakukan administrasi identitas biometrik. Antarmuka yang disediakan meliputi tabel daftar karyawan yang dilengkapi dengan fungsi pencarian berdasarkan nama atau nomor identitas guna mempercepat proses pencarian data pada volume yang besar. Tabel master juga menyajikan indikator status sinkronisasi biometrik guna menginformasikan petugas apakah data wajah karyawan telah berhasil terdistribusi ke seluruh unit gerbang fisik. Selain itu, sistem menerapkan mekanisme proteksi data melalui dialog konfirmasi tindakan kritikal, guna mencegah terjadinya penghapusan identitas secara tidak sengaja oleh operator.
+Implementasi pengelolaan data induk karyawan dilakukan pada halaman \texttt{app/dashboard/management/karyawan/}. Halaman ini memfasilitasi petugas dalam melakukan administrasi identitas biometrik. Antarmuka yang disediakan meliputi tabel daftar karyawan yang dilengkapi dengan fungsi pencarian berdasarkan nama atau nomor identitas guna mempercepat proses pencarian data pada volume yang besar. Selain itu, sistem menerapkan mekanisme proteksi data melalui dialog konfirmasi tindakan kritikal, guna mencegah terjadinya penghapusan identitas secara tidak sengaja oleh operator.
 
-Sistem menyediakan formulir pendaftaran yang memungkinkan operator memasukkan nama, nomor identitas, dan mengunggah foto wajah karyawan. Begitu data disimpan, antarmuka akan memberikan indikasi status pengiriman data ke server. Selain fungsi pendaftaran, halaman ini juga mendukung fitur pembaruan data dan penghapusan identitas. Seluruh aksi manipulasi data pada antarmuka ini terhubung langsung dengan fungsi pengiriman perintah ke perangkat keras di lapisan \textit{middleware}. Untuk meningkatkan kemudahan penggunaan, antarmuka ini mengimplementasikan sistem notifikasi umpan balik. Setiap tahapan pendaftaran biometrik, mulai dari proses unggah berkas hingga keberhasilan sinkronisasi ke seluruh memori terminal, diinformasikan melalui pesan singkat yang muncul secara dinamis, sehingga operator mendapatkan kepastian status operasional tanpa harus memeriksa log server secara manual. Selain fungsi manajemen identitas, antarmuka ini menyediakan fitur audit historis melalui penyaringan rentang waktu. Operator dapat menentukan tanggal awal dan akhir untuk meninjau riwayat akses karyawan secara spesifik, guna mendukung kebutuhan investigasi insiden masa lalu. Hasil penyaringan tersebut kemudian dapat diekstraksi ke dalam format digital melalui fitur unduh laporan CSV yang telah terintegrasi, memudahkan proses pelaporan administratif tanpa ketergantungan pada akses langsung ke basis data server.
+Sistem menyediakan formulir pendaftaran yang memungkinkan operator memasukkan nama, nomor identitas, dan mengunggah foto wajah karyawan. Begitu data disimpan, antarmuka akan memberikan indikasi status pengiriman data ke server. Selain fungsi pendaftaran, halaman ini juga mendukung fitur pembaruan data dan penghapusan identitas. Seluruh aksi manipulasi data pada antarmuka ini terhubung langsung dengan fungsi pengiriman perintah ke perangkat keras di lapisan \textit{middleware}. Untuk meningkatkan kemudahan penggunaan, antarmuka ini mengimplementasikan sistem notifikasi umpan balik. Setiap tahapan pendaftaran biometrik, mulai dari proses unggah berkas hingga keberhasilan sinkronisasi ke seluruh memori terminal, diinformasikan melalui pesan singkat yang muncul secara dinamis, sehingga operator mendapatkan kepastian status operasional tanpa harus memeriksa log peladen secara manual.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     % \includegraphics[width=0.9\textwidth]{images/placeholder_management.png}
     \caption{Antarmuka Manajemen Data Karyawan dan Pendaftaran Biometrik}
@@ -305,11 +175,11 @@ Sistem menyediakan formulir pendaftaran yang memungkinkan operator memasukkan na
 \end{figure}
 
 \subsection{Realisasi Verifikasi Keamanan Visual}
-Sistem menyediakan mekanisme peninjauan bukti visual terhadap kejadian akses ditolak melalui dialog rincian log. Petugas keamanan dapat mengklik baris data pada daftar riwayat untuk memicu munculnya dialog verifikasi. Antarmuka ini dirancang untuk mempermudah audit manual dengan menyajikan perbandingan antara foto profil resmi karyawan (jika tersedia) dengan foto hasil tangkapan kamera terminal pada saat kejadian berlangsung.
+Sistem menyediakan mekanisme peninjauan bukti visual terhadap kejadian akses ditolak melalui dialog rincian log. Petugas keamanan dapat mengklik baris data pada daftar riwayat untuk memicu munculnya dialog verifikasi. Antarmuka ini dirancang untuk mempermudah audit manual dengan menyajikan foto hasil tangkapan kamera terminal pada saat kejadian berlangsung.
 
-Selain perbandingan citra, dialog verifikasi ini menampilkan informasi detail berupa stempel waktu kejadian, nama gerbang tempat terjadinya akses, serta alasan teknis penolakan akses. Data visual ini ditarik secara otomatis dari folder penyimpanan peladen melalui rute statis yang telah dikonfigurasi. Implementasi ini membantu petugas dalam mengidentifikasi potensi pelanggaran keamanan atau penggunaan kartu oleh pihak yang tidak berwenang secara akurat.
+Dialog verifikasi ini menampilkan informasi detail berupa stempel waktu kejadian, nama gerbang tempat terjadinya akses, serta alasan teknis penolakan akses. Data visual ini ditarik secara otomatis dari folder penyimpanan peladen melalui rute statis yang telah dikonfigurasi. Implementasi ini membantu petugas dalam mengidentifikasi potensi pelanggaran keamanan oleh pihak yang tidak berwenang secara akurat.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     % \includegraphics[width=0.6\textwidth]{images/placeholder_verification.png}
     \caption{Dialog Verifikasi Keamanan Visual pada Kejadian Anomali}
@@ -330,3 +200,5 @@ Implementasi keamanan ini juga mencakup verifikasi di sisi klien. Antarmuka peng
 Untuk menjaga kerahasiaan data akses, sistem menerapkan algoritma pengacakan kata sandi menggunakan pustaka \textit{Bcrypt}. Setiap kata sandi administrator yang didaftarkan akan dikonversi menjadi deretan karakter acak sebelum disimpan ke dalam tabel \texttt{account}. Proses pengecekan saat login dilakukan dengan membandingkan nilai acak tersebut, sehingga kata sandi asli tidak pernah tersimpan dalam bentuk teks biasa di dalam basis data.
 
 Selain perlindungan kata sandi, sistem menerapkan kebijakan keamanan jaringan melalui konfigurasi \textit{Cross-Origin Resource Sharing} (CORS) pada file \texttt{main.ts}. Konfigurasi ini membatasi interaksi dengan peladen hanya dari alamat asal yang terdaftar, seperti alamat lokal dashboard pengembangan atau domain produksi resmi. Sistem juga menggunakan file konfigurasi \texttt{.env} untuk memisahkan kunci rahasia dan kredensial basis data dari kode sumber utama guna meminimalisir risiko kebocoran informasi sensitif.
+
+Selain perlindungan pada tingkat aplikasi, arsitektur sistem diperkuat dengan pelapisan keamanan jaringan menggunakan NGINX sebagai \textit{Reverse Proxy}. NGINX dikonfigurasi sebagai titik masuk tunggal (\textit{single point of entry}) yang mencegat seluruh lalu lintas HTTP dari peramban klien sebelum diteruskan secara aman ke peladen NestJS. Implementasi ini tidak hanya menyembunyikan topologi jaringan internal peladen dari akses publik, tetapi juga berfungsi untuk membatasi ukuran muatan (\textit{payload}) data guna mencegah serangan \textit{Denial of Service} (DoS). Langkah mitigasi infrastruktur ini diimplementasikan secara spesifik untuk mematuhi Parameter Penilaian Kinerja Bangunan Gedung Cerdas pada aspek Keamanan Siber (Parameter A) sebagaimana diatur dalam Surat Edaran Menteri PU Nomor 22/SE/M/2024.

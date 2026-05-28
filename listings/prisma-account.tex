@@ -1,0 +1,11 @@
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=bash, caption={Implementasi Tabel Akun pada \texttt{schema.prisma}}, label={lst:prisma_account}, frame=single, captionpos=t]
+model account {
+  id              String      @id @default(uuid())
+  name            String      @db.VarChar(128)
+  username        String      @unique @db.VarChar(64)
+  password        String      @db.VarChar(255)
+  createdAt       DateTime    @default(now())
+}
+\end{lstlisting}
+\end{minipage}

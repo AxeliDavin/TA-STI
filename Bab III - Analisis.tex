@@ -7,19 +7,27 @@
 \cleardoublepage
 \chapter{ANALISIS MASALAH}
 \label{chap:analisis-masalah}
-Bab ini membahas secara mendalam analisis masalah yang terdapat pada sistem manajemen akses fisik eksisting di Gedung ITB Innovation Park (IIP), analisis kebutuhan untuk menyelesaikan masalah tersebut, serta analisis pemilihan solusi teknologi yang diusulkan. Secara garis besar, bab ini menguraikan deskripsi hasil analisis dari persoalan keterisolasian data akses karyawan, penjelasan tentang solusi pengembangan middleware ISAPI dan dashboard web pada level konsep desain, serta penjabaran pendekatan rekayasa perangkat lunak yang dipilih untuk merealisasikan solusi tersebut. Alur pembahasan pada bab ini dibagi ke dalam tiga bagian utama, yaitu analisis kondisi sistem kontrol akses saat ini, identifikasi kebutuhan fungsional dan non-fungsional sistem baru, dan diakhiri dengan analisis penentuan alternatif solusi teknologi yang paling optimal.
+Bab ini membahas secara mendalam analisis masalah yang terdapat pada sistem manajemen akses fisik saat ini di Gedung ITB Innovation Park (IIP), analisis kebutuhan untuk menyelesaikan masalah tersebut, serta analisis pemilihan solusi teknologi yang diusulkan. Secara garis besar, bab ini menguraikan deskripsi hasil analisis dari persoalan keterisolasian data akses karyawan, penjelasan tentang solusi pengembangan middleware ISAPI dan dashboard web pada level konsep desain, serta penjabaran pendekatan rekayasa perangkat lunak yang dipilih untuk merealisasikan solusi tersebut. Alur pembahasan pada bab ini dibagi ke dalam tiga bagian utama, yaitu analisis kondisi sistem kontrol akses saat ini, identifikasi kebutuhan fungsional dan non-fungsional sistem baru, dan diakhiri dengan analisis penentuan alternatif solusi teknologi yang paling optimal.
 
 \section{Analisis Kondisi Saat Ini}
-Pengelolaan akses fisik di Gedung ITB Innovation Park (IIP) saat ini berpusat pada area lobi utama yang merupakan jalur perlintasan utama personel. Berdasarkan hasil survei lapangan, alur operasional dan kondisi sistem kontrol akses saat ini divisualisasikan pada Gambar 3.1 (Diagram Alir Proses Saat Ini) dan dijabarkan sebagai berikut:
+Pengelolaan akses fisik di Gedung ITB Innovation Park (IIP) saat ini berpusat pada area lobi utama yang merupakan jalur perlintasan utama personel. Berdasarkan hasil survei lapangan, alur operasional dan kondisi sistem kontrol akses saat ini divisualisasikan pada Gambar \ref{fig:diagram_alir_saat_ini} (Diagram Alir Proses Saat Ini) dan dijabarkan sebagai berikut:
+
+\begin{figure}[t]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{images/diagram_alir_saat_ini.png}
+    \vspace{4cm} % Placeholder untuk Diagram Alir Proses Saat Ini
+    \caption{Diagram Alir Proses Manajemen Akses Saat Ini}
+    \label{fig:diagram_alir_saat_ini}
+\end{figure}
 
 \subsection{Konfigurasi Perangkat Keras di Lobi Utama}
 Area lobi dilengkapi dengan tiga jalur (lane) gerbang pembatas. Untuk mendukung fleksibilitas otentikasi, terdapat total 6 (enam) unit terminal akses biometrik yang terpasang (2 unit per jalur untuk akses masuk dan keluar). Seluruh perangkat tersebut telah mendukung teknologi pemindaian wajah (face recognition), kartu RFID, dan pemindaian sidik jari (fingerprint). Saat ini, terminal-terminal tersebut telah beroperasi normal dan tersinkronisasi secara internal di dalam ekosistem perangkat keras vendor.
 
-\subsection{Arsitektur Pengelolaan Data Eksisting}
+\subsection{Arsitektur Pengelolaan Data Saat Ini}
 Seluruh 6 terminal di lobi terhubung melalui jaringan LAN lokal ke satu unit komputer di area lobi yang bertindak sebagai PC Resepsionis. Komputer ini menjalankan perangkat lunak proprietary vendor (iVMS-4200) yang berfungsi sebagai server lokal untuk konfigurasi perangkat dan penarikan data log. (Catatan Batasan: Meskipun terdapat akses masuk melalui area basemen menggunakan teknologi sidik jari, area tersebut tidak termasuk dalam ruang lingkup penelitian ini dan tidak diberikan solusi dalam pengembangan sistem pada tugas akhir ini. Fokus penelitian sepenuhnya diarahkan pada integrasi web untuk keenam terminal di area lobi utama).
 
 \subsection{Model Konseptual Sistem Saat Ini}
-Mengacu pada teori sistem informasi menurut Laudon dan Laudon (2020), model konseptual sistem eksisting di Gedung IIP memiliki komponen sebagai berikut:
+Mengacu pada teori sistem informasi menurut Laudon dan Laudon (2020), model konseptual sistem saat ini di Gedung IIP memiliki komponen sebagai berikut:
 \begin{enumerate}
     \item   Input: Registrasi karyawan dilakukan melalui aplikasi desktop vendor pada PC Resepsionis atau didaftarkan langsung di salah satu terminal gerbang.
     \item   Proses: Pemadanan identitas biometrik dilakukan secara mandiri oleh masing-masing dari 6 terminal gerbang saat personel melakukan akses (tapping).
@@ -49,11 +57,7 @@ Berdasarkan hasil wawancara dengan perwakilan pengelola gedung dan Kepala Seksi 
 \end{enumerate}
 
 \subsection{Kebutuhan Fungsional}
-Kebutuhan fungsional mendefinisikan layanan, fitur, dan fungsionalitas yang wajib disediakan oleh sistem berdasarkan hasil analisis masalah.
-
-Perlu dicatat bahwa meskipun hasil identifikasi masalah dari pihak pengelola gedung menitikberatkan pada perlindungan privasi dengan hanya menampilkan bukti visual pada kejadian anomali, spesifikasi akhir sistem mengalami penyesuaian. Berdasarkan hasil evaluasi dan arahan dari dosen pembimbing, sistem pada akhirnya dirancang untuk menyimpan dan menampilkan bukti visual (\textit{snapshot}) untuk seluruh log kejadian (baik akses yang berhasil maupun yang ditolak). Penyesuaian ini diimplementasikan guna memenuhi standar audit akademis, sehingga keandalan serta akurasi mesin biometrik dapat divalidasi secara menyeluruh selama fase pengujian Tugas Akhir berlangsung.
-
-Berikut adalah rincian spesifikasi kebutuhan fungsional sistem yang telah ditetapkan.
+Kebutuhan fungsional mendefinisikan layanan, fitur, dan fungsionalitas yang wajib disediakan oleh sistem berdasarkan hasil analisis masalah. Berikut adalah rincian spesifikasi kebutuhan fungsional sistem yang telah ditetapkan.
 
 \input{tables/tab_kebutuhan_fungsional_sistem}
 
@@ -69,42 +73,41 @@ Pemilihan solusi teknologi untuk sistem manajemen akses karyawan dilakukan melal
 Berdasarkan hasil diskusi teknis pada tahap \textit{Ideate}, dilakukan analisis perbandingan terhadap enam komponen utama arsitektur sistem. Setiap komponen dievaluasi menggunakan matriks keputusan dengan parameter bobot yang disesuaikan pada kebutuhan operasional Gedung IIP. Pemberian skor dan pembobotan kriteria pada setiap matriks di bawah ini dilakukan secara kualitatif berdasarkan hasil diskusi tim teknis, evaluasi empiris terhadap dokumentasi resmi masing-masing teknologi, serta pengujian prototipe awal (\textit{Proof of Concept}) pada lingkungan pengembangan.
 
 \subsubsection{API Gateway dan Keamanan}
-Evaluasi dilakukan untuk menentukan lapisan pintu gerbang API yang mampu menangani beban trafik dan otentikasi. Berdasarkan Tabel \ref{tab:matriks_api_gateway}, NGINX dipilih karena keunggulannya dalam penggunaan sumber daya (\textit{resource usage}) yang rendah namun memiliki komunitas dukungan yang sangat luas.
+Evaluasi dilakukan untuk menentukan lapisan pintu gerbang API yang mampu menangani beban lalu lintas layanan dan otentikasi. Berdasarkan Tabel \ref{tab:matriks_api_gateway}, NGINX dipilih karena keunggulannya dalam penggunaan sumber daya yang rendah dan memiliki komunitas dukungan yang sangat luas.
 \input{tables/tab_matriks_api_gateway}
 
 \subsubsection{Layanan Backend dan Logika Bisnis}
-Pemilihan kerangka kerja \textit{backend} difokuskan pada kemampuan menangani banyak koneksi terminal secara asinkron. Berdasarkan Tabel \ref{tab:matriks_backend}, NestJS dipilih karena arsitektur modularnya yang memungkinkan pengembangan layanan yang sangat terstruktur dan efisien.
+Pemilihan kerangka kerja \textit{backend} difokuskan pada kemampuan menangani banyak koneksi terminal secara asinkron. Berdasarkan Tabel \ref{tab:matriks_backend}, NestJS dipilih karena arsitektur modularnya yang memungkinkan pengembangan layanan yang sangat terstruktur dan efisien serta mendukung fungsionalitas seperti \textit{websocket} dan \textit{cron job} yang dibutuhkan oleh sistem yang akan dikembangkan.
 \input{tables/tab_matriks_backend}
 
 \subsubsection{Mekanisme Sinkronisasi Data}
-Mekanisme ini krusial untuk menjaga konsistensi antara perangkat keras dan server. Selain membandingkan infrastruktur (\textit{Cron Job} vs \textit{Message Broker}), tim juga mengevaluasi pendekatan algoritma sinkronisasi. Dibandingkan dengan metode \textit{Truncate \& Insert All} yang menghapus seluruh data dan memuat ulang ribuan record yang membebani kinerja \textit{database}, dipilih pendekatan Mark \& Sweep. Algoritma ini jauh lebih efisien karena hanya menandai data yang berubah atau terhapus di perangkat keras untuk kemudian disesuaikan pada basis data server, sehingga meminimalkan beban komputasi dan menjamin integritas data (KNF-01).
+Mekanisme ini krusial untuk menjaga konsistensi antara perangkat keras dan server. Berdasarkan Tabel \ref{tab:matriks_sync_engine}, \textit{cron job} dipilih dengan pertimbangan kemudahan implementasi serta efisiensi sumber daya.
 \input{tables/tab_matriks_sync_engine}
 
 \subsubsection{Manajemen Basis Data}
-Akurasi riwayat akses karyawan sangat bergantung pada integritas basis data. Berdasarkan Tabel \ref{tab:matriks_database}, PostgreSQL terpilih sebagai solusi mutlak karena kepatuhannya terhadap sifat ACID yang menjamin keamanan data log.
+Akurasi pencatatan penghuni yang berada di dalam gedung sangat bergantung pada integritas basis data. Berdasarkan Tabel \ref{tab:matriks_database}, PostgreSQL terpilih sebagai solusi mutlak karena kepatuhannya terhadap sifat ACID yang menjamin keamanan data log serta mendukung kebutuhan integritas data yang tinggi.
 \input{tables/tab_matriks_database}
 
 \subsubsection{Antarmuka Pengguna (Frontend Dashboard)}
-Visualisasi data yang cepat dibutuhkan oleh pihak admin. Berdasarkan Tabel \ref{tab:matriks_frontend}, Next.js memberikan skor tertinggi berkat fitur \textit{Server-Side Rendering} yang menjamin performa antarmuka tetap responsif.
+Visualisasi data yang cepat dibutuhkan oleh pihak pengelola dan keamanan saat terjadi kondisi darurat. Berdasarkan Tabel \ref{tab:matriks_frontend}, Next.js memberikan keunggulan berkat fitur \textit{Server-Side Rendering} yang menjamin performa antarmuka tetap responsif.
 \input{tables/tab_matriks_frontend}
 
-\subsubsection{Komunikasi Real-time}
-Kebutuhan pemantauan instan tanpa muat ulang halaman dijawab melalui perbandingan pada Tabel \ref{tab:matriks_realtime}. Socket.IO dipilih sebagai jembatan komunikasi karena kemudahan integrasi dengan ekosistem web modern.
+\subsubsection{Protokol Komunikasi Antarmuka dan Backend}
+Kebutuhan pemantauan instan pada halaman antarmuka dijawab melalui perbandingan pada Tabel \ref{tab:matriks_realtime}. \textit{Websocket} (Socket.IO) beserta RESTful API dipilih sebagai jembatan komunikasi karena kemudahan integrasi dengan ekosistem web modern serta menawarkan perpindahan data yang responsif dan cepat untuk seluruh perangkat yang menjalankan aplikasi.
 \input{tables/tab_matriks_realtime}
 
 \subsubsection{Protokol Komunikasi Perangkat Keras}
-Pemilihan cara berkomunikasi dengan terminal gerbang Hikvision merupakan inti teknis dari penelitian ini. Berasarkan Tabel \ref{tab:matriks_protokol_perangkat}, ISAPI dipilih sebagai protokol utama karena keunggulannya yang berbasis HTTP/REST dan bersifat \textit{platform-independent}, berbeda dengan SDK bawaan vendor yang kaku atau protokol Wiegand yang tidak mendukung penarikan data visual.
-\input{tables/tab_matriks_protokol}
+Integrasi dengan terminal gerbang Hikvision dilakukan menggunakan protokol ISAPI (\textit{Intelligent Storage Architecture Public Interface}). ISAPI merupakan protokol \textit{native} bawaan perangkat yang berbasis standar HTTP/REST, sehingga bersifat \textit{platform-independent} dan memungkinkan kontrol penuh terhadap fitur-fitur perangkat secara langsung, seperti pengambilan \textit{snapshot} kamera saat terjadi anomali. Penggunaan protokol ini dipilih dibandingkan penggunaan SDK vendor (\textit{HCNetSDK}) untuk menghindari ketergantungan pada sistem operasi tertentu serta meminimalkan beban dependensi eksternal pada aplikasi.
 
 \subsection{Analisis Penentuan Solusi Akhir}
 Berdasarkan serangkaian evaluasi terhadap alternatif komponen di atas, diputuskan untuk menggunakan kombinasi solusi akhir sebagai berikut:
 
 \begin{enumerate}
-    \item NGINX sebagai API Gateway: Dipilih untuk menangani lapisan keamanan terluar dan \textit{reverse proxy}. NGINX menjamin efisiensi penggunaan sumber daya server dibandingkan opsi \textit{message gateway} lainnya.
-    \item NestJS sebagai Backend Service: Dipilih karena arsitektur modularnya yang memudahkan pemisahan logika antara manajemen identitas dan penarikan data transaksi asinkron.
-    \item Cron Jobs sebagai Sync Engine: Dipilih demi menyederhanakan infrastruktur fisik. Penjadwalan periodik (10 detik dan 1 menit) terbukti stabil untuk memenuhi kebutuhan sinkronisasi pada lingkungan lokal Gedung IIP.
-    \item PostgreSQL dan Prisma ORM: Dipilih untuk menjamin integritas relasional antara profil karyawan dan log pergerakan yang masif, serta mempercepat pengembangan melalui pemodelan data yang tipe-aman (\textit{type-safe}).
-    \item Next.js sebagai Frontend Dashboard: Dipilih untuk memberikan performa antarmuka yang cepat melalui mekanisme \textit{Server-Side Rendering} (SSR), sehingga penyajian data riwayat akses tetap responsif.
-    \item Socket.IO untuk Komunikasi Real-time: Dipilih sebagai jembatan komunikasi dua arah yang memungkinkan data pergerakan muncul di \textit{dashboard} secara instan tanpa pemuatan ulang halaman.
-    \item Integrasi ISAPI secara Langsung (vs SDK): Dipilih sebagai standar komunikasi langsung dengan perangkat keras karena sifatnya yang \textit{platform-independent}, memungkinkan kontrol penuh terhadap fitur-fitur Hikvision (seperti pengambilan foto anomali) tanpa ketergantungan pada SDK vendor.
+    \item NGINX sebagai API Gateway: Dipilih untuk menangani lapisan keamanan terluar dan \textit{reverse proxy}. NGINX menjamin efisiensi penggunaan sumber daya server dan kemudahan implementasi dibandingkan opsi \textit{message gateway} lainnya.
+    \item NestJS sebagai Layanan Backend: Dipilih karena arsitektur modularnya yang memudahkan pemisahan logika antara setiap fungsionalitas dalam \textit{backend}. Teknologi ini juga mendukung fungsionalitas seperti \textit{websocket} dan \textit{cron job} yang dibutuhkan oleh sistem.
+    \item Cron Jobs sebagai Sync Engine: Dipilih demi menyederhanakan infrastruktur fisik. Penjadwalan periodik dianggap cukup untuk memenuhi kebutuhan sinkronisasi pada lingkungan lokal Gedung IIP.
+    \item PostgreSQL dan Prisma ORM: Dipilih untuk menjamin integritas relasional antara profil karyawan dan log pergerakan penghuni, serta mempercepat pengembangan melalui pemodelan data yang tipe-aman (\textit{type-safe}).
+    \item Next.js sebagai Frontend Dashboard: Dipilih untuk memberikan performa antarmuka yang cepat melalui mekanisme \textit{Server-Side Rendering} (SSR), sehingga penyajian data tetap responsif.
+    \item Websocket (Socket.IO) dan RESTful API untuk Komunikasi Real-time: Dipilih sebagai jembatan komunikasi dua arah yang memungkinkan pergerakan data muncul di \textit{dashboard} secara instan tanpa pemuatan ulang halaman, memungkinkan petugas keamanan bekerja secara paralel.
+    \item Integrasi Protokol ISAPI secara Langsung: Implementasi dilakukan menggunakan protokol bawaan perangkat untuk menjamin sifat \textit{platform-independent} serta memungkinkan kontrol penuh terhadap fitur perangkat keras tanpa ketergantungan pada pustaka SDK vendor yang bersifat spesifik terhadap sistem operasi tertentu.
 \end{enumerate}

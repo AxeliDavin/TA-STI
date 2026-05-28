@@ -1,0 +1,17 @@
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=bash, caption={Konfigurasi Layanan Basis Data pada \texttt{docker-compose.yml}}, label={lst:docker_config}, frame=single, captionpos=t]
+services:
+  postgres:
+    image: postgres:15
+    container_name: smart_gate_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: db_admin
+      POSTGRES_PASSWORD: password_rahasia
+      POSTGRES_DB: smart_gate_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+\end{lstlisting}
+\end{minipage}

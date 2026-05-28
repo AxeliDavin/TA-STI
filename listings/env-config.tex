@@ -1,0 +1,13 @@
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=bash, caption={Contoh Struktur File Konfigurasi \texttt{.env}}, label={lst:env_config}, frame=single, captionpos=t]
+# Kredensial Basis Data (Diakses oleh Prisma ORM)
+DATABASE_URL="postgresql://db_admin:password_rahasia@localhost:5433/smartgate_db"
+
+# Kunci Keamanan Token (Diakses oleh Modul Otentikasi)
+JWT_SECRET="kunci_rahasia_jwt_anda"
+
+# Konfigurasi Konektivitas Internal
+PORT=3001
+NEXT_PUBLIC_API_URL="http://localhost:3001"
+\end{lstlisting}
+\end{minipage}

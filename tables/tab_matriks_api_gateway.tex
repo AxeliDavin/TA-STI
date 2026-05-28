@@ -1,23 +1,16 @@
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \caption{Matriks Keputusan Pemilihan API Gateway \& Security Layer}
     \label{tab:matriks_api_gateway}
-    \begin{tabular}{|l|c|c|c|c|}
+    \begin{tabularx}{\textwidth}{|l|X|X|}
         \hline
-        \textbf{Kriteria} & \textbf{Bobot} & \textbf{Kong} & \textbf{NGINX} & \textbf{Traefik} \\
+        \textbf{Solusi} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
         \hline
-        Fitur Keamanan & 30\% & 5 & 4 & 4 \\
+        NGINX Reverse Proxy & Menawarkan efisiensi penggunaan sumber daya yang sangat tinggi dan stabilitas optimal untuk menangani volume trafik besar. Proses konfigurasi sebagai \textit{reverse proxy} dan \textit{load balancer} relatif sederhana dengan dukungan komunitas yang luas. & Kapabilitas manajemen API bawaan tidak sekomprehensif solusi khusus API Gateway, sehingga memerlukan alat tambahan untuk fungsi pemantauan dan analitik mendalam. \\
         \hline
-        \textit{Resource Usage} & 30\% & 3 & 5 & 4 \\
+        Kong API Gateway & Menyediakan ekosistem fitur yang sangat lengkap (seperti \textit{rate limiting}, autentikasi, dan sistem \textit{plugin security}) yang dirancang khusus untuk kompleksitas arsitektur mikroservis. & Prosedur instalasi dan konfigurasi lebih kompleks dibandingkan NGINX, serta menuntut alokasi sumber daya komputasi (\textit{overhead}) yang lebih besar. \\
         \hline
-        Kemudahan Konfigurasi & 20\% & 3 & 4 & 5 \\
+        Traefik & Unggul dalam mekanisme penemuan layanan (\textit{service discovery}) dan konfigurasi otomatis, terutama pada lingkungan berbasis kontainer seperti Docker. & Fitur kelas \textit{enterprise} dan instrumen pemantauan tidak sedalam Kong, serta belum menjadi standar umum untuk implementasi sistem manajemen gedung skala industri. \\
         \hline
-        Komunitas/Dukungan & 20\% & 5 & 5 & 4 \\
-        \hline
-        \textbf{Total Skor} & \textbf{100\%} & \textbf{4.20} & \textbf{4.50}* & \textbf{4.20} \\
-        \hline
-    \end{tabular}
-    \begin{flushleft}
-        \small *Dipilih sebagai solusi akhir dalam tahap revisi arsitektur.
-    \end{flushleft}
+    \end{tabularx}
 \end{table}

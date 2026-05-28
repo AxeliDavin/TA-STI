@@ -1,0 +1,45 @@
+\begin{lstlisting}[language=bash, caption={Implementasi Skema Tabel Utama pada \texttt{schema.prisma}}, label={lst:prisma_schema}, frame=single, captionpos=t]
+// 1. Person (ISAPI Format: UserInfo Search)
+model person {
+  employeeNo      String      @id @db.VarChar(32)
+  name            String      @db.VarChar(128)
+  userType        UserType    @default(normal)
+  gender          Gender      @default(unknown)
+  validEnable     Boolean     @default(true)
+  validBeginTime  DateTime?
+  validEndTime    DateTime?
+  last_synced_at  DateTime    @default(now())
+  photo_path      String?     @db.VarChar(255)
+  access_records  access_record[]
+}
+
+// 2. Gate (Sesuai ERD)
+model gate {
+  id              String      @id @default(uuid())
+  device_id       String?     @unique
+  name            String      @db.VarChar(128)
+  ip_address      String      @db.VarChar(64)
+  username        String      @db.VarChar(64)
+  password        String      @db.VarChar(128)
+  direction       GateDirection @default(IN)
+  last_synced_at  DateTime?
+  access_records  access_record[]
+}
+
+// 3. Access Record (ISAPI Format: AcsEvent)
+model access_record {
+  serialNo           String      @id @db.VarChar(128)
+  major              Int
+  minor              Int
+  time               DateTime
+  person_id          String?     @db.VarChar(32)
+  person             person?     @relation(fields: [person_id], references: [employeeNo])
+  gate_id            String?
+  gate               gate?       @relation(fields: [gate_id], references: [id])
+  snapshot_path      String?     @db.VarChar(255)
+  is_processed       Boolean     @default(false)
+
+  @@index([time])
+  @@index([person_id])
+}
+\end{lstlisting}

@@ -1,20 +1,16 @@
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \caption{Matriks Keputusan Pemilihan Frontend Dashboard}
     \label{tab:matriks_frontend}
-    \begin{tabular}{|l|c|c|c|c|}
+    \begin{tabularx}{\textwidth}{|l|X|X|}
         \hline
-        \textbf{Kriteria} & \textbf{Bobot} & \textbf{Next.js} & \textbf{React} & \textbf{Vue/Nuxt} \\
+        \textbf{Solusi} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
         \hline
-        Performa SSR & 30\% & 5 & 2 & 5 \\
+        Next.js & Menawarkan arsitektur yang sangat skalabel dengan performa tinggi melalui dukungan \textit{native} untuk \textit{Server-Side Rendering} (SSR). Struktur modularnya sangat kompatibel untuk pengembangan \textit{dashboard} skala \textit{enterprise}. & Memiliki struktur proyek yang lebih kompleks serta memerlukan pemahaman mendalam mengenai konvensi \textit{framework} dibandingkan dengan pustaka React standar. \\
         \hline
-        Ekosistem Komponen & 30\% & 5 & 5 & 4 \\
+        React.js (Vite) & Memfasilitasi siklus pengembangan yang sangat cepat dan ringan melalui integrasi Vite. Didukung oleh ekosistem pustaka dan komponen pihak ketiga yang sangat luas. & Fungsionalitas tingkat lanjut seperti \textit{routing} dan SSR tidak tersedia secara bawaan, sehingga memerlukan konfigurasi serta dependensi tambahan. \\
         \hline
-        Kemudahan SEO/Indexing & 20\% & 5 & 2 & 5 \\
+        Vue.js & Memiliki sintaksis yang intuitif sehingga mudah dipelajari, serta menawarkan struktur kode yang bersih (\textit{clean code}) dan performa \textit{runtime} yang ringan. & Ekosistem untuk kebutuhan \textit{enterprise} serta ketersediaan pustaka pihak ketiga tidak seluas ekosistem React. \\
         \hline
-        \textit{State Management} & 20\% & 5 & 4 & 4 \\
-        \hline
-        \textbf{Total Skor} & \textbf{100\%} & \textbf{5.00} & \textbf{3.40} & \textbf{4.50} \\
-        \hline
-    \end{tabular}
+    \end{tabularx}
 \end{table}
