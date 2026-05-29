@@ -2,7 +2,6 @@
 \begin{lstlisting}[language=bash, caption={Penyusunan Struktur Data Biner Manual}, label={lst:isapi_multipart}, frame=single, captionpos=t]
 const boundary = `----HikvisionISAPIBoundary${crypto.randomBytes(4).toString('hex')}`;
 
-// Penyusunan struktur manual untuk data wajah
 const part1 = 
   `--${boundary}\r\n` +
   `Content-Disposition: form-data; name="faceDataRecord"\r\n\r\n` + 

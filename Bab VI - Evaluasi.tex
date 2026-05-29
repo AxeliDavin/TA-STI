@@ -11,129 +11,121 @@ Bab ini memaparkan proses evaluasi yang dilakukan untuk memvalidasi keberhasilan
 Bagian ini memaparkan konfigurasi infrastruktur dan batasan operasional yang digunakan untuk memvalidasi kinerja sistem. Pengujian dirancang secara terstruktur guna memastikan seluruh integrasi perangkat lunak dan perangkat keras berjalan sesuai dengan spesifikasi yang telah ditetapkan.
 
 \subsection{Infrastruktur dan Lingkungan Uji}
-Pengujian dilaksanakan dalam lingkungan jaringan area lokal (\textit{LAN}) lobi gedung untuk mensimulasikan kondisi operasional nyata. Arsitektur pengujian mengintegrasikan tiga komponen utama: peladen komputasi yang menjalankan basis data PostgreSQL di dalam wadah \textit{Docker}, terminal fisik Hikvision \textit{Face Recognition} sebagai sensor biometrik, dan peramban web \textit{Google Chrome} sebagai antarmuka \textit{dashboard} klien. Sebelum rangkaian pengujian dimulai, sistem dikondisikan pada status bersih (\textit{clean state}) melalui purifikasi memori internal terminal dan pembersihan (\textit{truncate}) rekaman pada basis data guna mencegah interferensi residu data.
+Pengujian dilaksanakan dalam lingkungan jaringan area lokal (\textit{LAN}) lobi gedung untuk mensimulasikan kondisi operasional nyata. Arsitektur pengujian mengintegrasikan tiga komponen utama: peladen komputasi yang menjalankan basis data PostgreSQL di dalam wadah Docker, terminal fisik Hikvision Face Recognition sebagai sensor biometrik, dan perangkat klien untuk mengakses antarmuka dashboard. Sebelum rangkaian pengujian dimulai, sistem dikondisikan pada status bersih (\textit{clean state}) melalui purifikasi memori internal terminal dan pembersihan (\textit{truncate}) rekaman pada basis data guna mencegah interferensi residu data.
 
 \subsection{Skenario dan Data Uji}
-Dataset evaluasi terdiri dari 10 profil identitas karyawan bersifat \textit{pseudonymous}. Skenario pengujian dikonstruksi secara \textit{end-to-end}, mencakup validasi siklus hidup data karyawan melalui operasi \textit{Create, Read, Update, Delete} (CRUD), penarikan log riwayat secara \textit{real-time} dari sensor perangkat keras, hingga agregasi status pergerakan menggunakan mesin status (\textit{State Machine}). Pengujian juga mencakup simulasi anomali akses untuk memvalidasi mekanisme pengunduhan bukti visual secara otomatis oleh sistem. Sebagai catatan batasan pengujian, fungsi sinkronisasi biometrik hanya dievaluasi pada tahap pengiriman data tekstual (Nama dan ID) dikarenakan kendala pada sinkronisasi foto wajah.
+Dataset evaluasi menggunakan data simulasi mandiri yang terdiri dari profil identitas dan biometrik wajah peneliti. Pendekatan ini dipilih untuk merepresentasikan beban operasional secara riil, sekaligus menjamin kepatuhan terhadap etika perlindungan privasi data karyawan asli Gedung IIP. Skenario pengujian dikonstruksi secara \textit{end-to-end}, mencakup validasi siklus hidup data karyawan melalui operasi \textit{Create, Read, Update, Delete} (CRUD), penarikan log riwayat secara \textit{real-time} dari sensor perangkat keras. Pengujian juga mencakup simulasi anomali akses untuk memvalidasi mekanisme pengunduhan bukti visual secara otomatis oleh sistem. Sebagai catatan batasan pengujian, fungsi sinkronisasi biometrik hanya dievaluasi pada tahap pengiriman data tekstual (Nama dan ID) dikarenakan kendala pada sinkronisasi foto wajah.
 
 \subsection{Matriks Pemetaan Kriteria Keberhasilan}
 Seluruh skenario pengujian dirancang secara spesifik untuk memvalidasi pencapaian tiga kriteria keberhasilan utama yang telah ditetapkan pada Bab I. Pemetaan antara kriteria keberhasilan dengan subbab evaluasi ditampilkan pada Tabel \ref{tab:mapping_success}.
 
-\begin{table}[t]
-\centering
-\caption{Matriks Pemetaan Kriteria Keberhasilan dan Evaluasi}
-\label{tab:mapping_success}
-\begin{tabular}{|l|p{8cm}|l|}
-\hline
-\textbf{Kode} & \textbf{Kriteria Keberhasilan} & \textbf{Subbab Evaluasi} \\ \hline
-K-1 & Keberhasilan sinkronisasi data profil (CRUD) secara terpusat. & Subbab \ref{sec:evaluasi_sinkronisasi} \\ \hline
-K-2 & Akurasi ekstraksi, agregasi, dan penyajian log \textit{real-time}. & Subbab \ref{sec:evaluasi_akurasi} \\ \hline
-K-3 & Deteksi anomali akses dan implementasi perlindungan privasi visual. & Subbab \ref{sec:evaluasi_keamanan} \\ \hline
-\end{tabular}
-\end{table}
+\input{tables/tab_mapping_success}
+
+\subsection{Prosedur Pengujian Aliran Data}
+Untuk memvalidasi integritas aliran data dari perangkat keras hingga ke antarmuka pengguna, dilakukan pengujian alur kerja sistem secara menyeluruh menggunakan metode \textit{Black-box Testing}. Prosedur pengujian ini mengikuti diagram alir yang ditunjukkan pada Gambar \ref{fig:flowchart_uji}, di mana setiap titik integrasi (ISAPI, Database, dan WebSocket) dipantau untuk memastikan tidak ada data yang hilang atau tertahan di lapisan penengah. Pengecekan dilakukan secara atomik mulai dari pemicu kejadian fisik pada terminal hingga visualisasi akhir pada \textit{dashboard}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/flowchart_uji.png}
+    \caption{Diagram Alir Prosedur Pengujian Aliran Data \textit{End-to-End}}
+    \label{fig:flowchart_uji}
+\end{figure}
 
 \section{Evaluasi Fungsionalitas Sinkronisasi Identitas}
 \label{sec:evaluasi_sinkronisasi}
-Evaluasi ini bertujuan untuk memvalidasi pencapaian kriteria keberhasilan pertama (K-1), yaitu kemampuan sistem dalam melakukan pengelolaan identitas karyawan secara terpusat serta melakukan propagasi data tersebut ke seluruh unit gerbang. Pengujian fungsionalitas dilakukan menggunakan metode \textit{Black-box Testing} dengan hasil yang dirangkum pada Tabel \ref{tab:test_functional}.
+Evaluasi ini bertujuan untuk memvalidasi pencapaian kriteria keberhasilan pertama (K-1), yaitu kemampuan sistem dalam melakukan pengelolaan identitas karyawan secara terpusat serta menginisiasi propagasi data tersebut ke unit gerbang. Pengujian fungsionalitas dilakukan menggunakan metode \textit{Black-box Testing} dengan hasil yang dirangkum pada Tabel \ref{tab:test_functional}.
 
-\begin{table}[t]
-\centering
-\caption{Hasil Pengujian Fungsionalitas Sinkronisasi Karyawan}
-\label{tab:test_functional}
-\begin{tabular}{|l|p{4.5cm}|p{4cm}|c|}
-\hline
-\textbf{Skenario} & \textbf{Langkah Pengujian} & \textbf{Hasil yang Diharapkan} & \textbf{Status} \\ \hline
-Pendaftaran Profil & Memasukkan Nama dan ID melalui \textit{dashboard}. & Data tersimpan di basis data dan identitas tekstual aktif di memori terminal gerbang. & Lulus \\ \hline
-Pembaruan Parsial & Melakukan perubahan nama karyawan melalui antarmuka manajemen. & Nama pada layar terminal gerbang diperbarui tanpa kendala sinkronisasi. & Lulus \\ \hline
-Penghapusan Identitas & Menjalankan instruksi hapus pada tabel master karyawan. & Rekaman identitas musnah dari basis data dan hak akses di gerbang dicabut. & Lulus \\ \hline
-Sinkronisasi Wajah & Mengunggah foto wajah melalui \textit{dashboard}. & Foto terkirim dan diikatkan pada ID karyawan di memori terminal. & Gagal \\ \hline
-\end{tabular}
-\end{table}
+\input{tables/tab_test_functional}
 
 Berdasarkan hasil pengujian pada Tabel \ref{tab:test_functional}, fungsi pengelolaan siklus hidup data berjalan dengan baik pada aspek tekstual. Mekanisme penanganan konflik memori (\textit{Upsert Fallback}) dan pembaruan parsial menjamin bahwa proses sinkronisasi identitas berjalan secara efisien. Namun, sinkronisasi citra biometrik tidak dapat diselesaikan karena kendala pada pembacaan \textit{multipart boundary} oleh \textit{firmware} perangkat keras.
 
 \begin{figure}[t]
     \centering
-    % \includegraphics[width=0.7\textwidth]{images/bukti_sinkronisasi.png}
-    \vspace{5cm} 
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/bukti_sinkronisasi_1.png}
+        \caption{Pendaftaran}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/bukti_sinkronisasi_2.png}
+        \caption{Status Berhasil}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/bukti_sinkronisasi_3.png}
+        \caption{Terdeteksi di Perangkat}
+    \end{subfigure}
     \caption{Bukti Keberhasilan Sinkronisasi Data Tekstual Karyawan ke Terminal Fisik}
     \label{fig:bukti_sinkronisasi}
 \end{figure}
 
 \section{Evaluasi Akurasi Pemrosesan Log dan Kinerja Real-time}
 \label{sec:evaluasi_akurasi}
-Evaluasi ini divalidasi untuk menjawab kriteria keberhasilan kedua (K-2). Pengujian difokuskan pada pengukuran kecepatan diseminasi log (latensi) serta ketepatan algoritma mesin status dalam mengubah log mentah menjadi informasi kehadiran.
+Evaluasi ini divalidasi untuk menjawab kriteria keberhasilan kedua (K-2). Pengujian difokuskan pada pengukuran kecepatan diseminasi log (latensi) serta ketepatan sistem dalam mencatat riwayat pergerakan (masuk/keluar) secara akurat..
 
 \subsection{Pengukuran Latensi Komunikasi Real-time}
 Kecepatan penyajian data diukur dengan menghitung interval waktu antara kejadian fisik di gerbang hingga data muncul pada \textit{dashboard}. Pengukuran dari lima kali repetisi pengujian ditampilkan pada Tabel \ref{tab:test_latency}.
 
-\begin{table}[t]
-\centering
-\caption{Hasil Pengukuran Latensi Jalur Komunikasi}
-\label{tab:test_latency}
-\begin{tabular}{|c|c|c|l|}
-\hline
-\textbf{Percobaan} & \textbf{Waktu Kejadian (s)} & \textbf{Waktu Dashboard (s)} & \textbf{Selisih (ms)} \\ \hline
-1 & 10:15:01,200 & 10:15:02,050 & 850 \\ \hline
-2 & 10:15:15,450 & 10:15:16,280 & 830 \\ \hline
-3 & 10:15:30,100 & 10:15:31,020 & 920 \\ \hline
-4 & 10:15:45,800 & 10:15:46,650 & 850 \\ \hline
-5 & 10:16:00,300 & 10:16:01,250 & 950 \\ \hline
-\multicolumn{3}{|r|}{\textbf{Rata-rata Latensi}} & \textbf{880 ms} \\ \hline
-\end{tabular}
-\end{table}
+\input{tables/tab_test_latency}
 
 \subsection{Evaluasi Akurasi Pemrosesan Riwayat Akses}
 Ketepatan pemrosesan riwayat pergerakan karyawan diuji menggunakan skenario pergerakan fisik berurutan. Hasil evaluasi verifikasi log ditampilkan pada Tabel \ref{tab:test_log_accuracy}.
 
-\begin{table}[t]
-\centering
-\caption{Hasil Pengujian Akurasi Pemrosesan Riwayat Akses}
-\label{tab:test_log_accuracy}
-\begin{tabular}{|l|p{5cm}|p{3.5cm}|c|}
-\hline
-\textbf{Skenario} & \textbf{Aktivitas Fisik} & \textbf{Hasil di Dashboard} & \textbf{Status} \\ \hline
-Deteksi Masuk & Karyawan memindai wajah di Gerbang Masuk. & Log tercatat sebagai aktivitas masuk (\textit{IN}) secara tepat waktu. & Lulus \\ \hline
-Deteksi Keluar & Karyawan memindai wajah di Gerbang Keluar. & Log tercatat sebagai aktivitas keluar (\textit{OUT}) secara tepat waktu. & Lulus \\ \hline
-\textit{Access Debounce} & Karyawan memindai wajah dua kali berturut-turut ($<$ 60 detik). & Log kedua diabaikan oleh sistem untuk mencegah duplikasi data. & Lulus \\ \hline
-\end{tabular}
-\end{table}
+\input{tables/tab_test_log_accuracy}
 
 \subsection{Evaluasi Akurasi Laporan Administratif (CSV)}
 Sistem juga divalidasi kemampuannya dalam mengonsolidasikan data log menjadi laporan CSV. Pengujian membuktikan algoritma \textit{middleware} bekerja secara presisi dalam menentukan jam kedatangan pertama (\textit{first-in}) dan kepulangan terakhir (\textit{last-out}) meskipun karyawan melakukan pergerakan keluar-masuk gedung berkali-kali dalam satu hari kerja. 
 
 \begin{figure}[t]
     \centering
-    % \includegraphics[width=0.9\textwidth]{images/bukti_realtime_log.png}
-    \vspace{5cm}
+    \includegraphics[width=0.9\textwidth]{images/bukti_realtime_log.png}
     \caption{Visualisasi Log Aktivitas dan Contoh Laporan Hasil Agregasi}
     \label{fig:bukti_realtime_log}
 \end{figure}
+
+\subsection{Uji Ketahanan Pemindaian Beruntun (\textit{Rapid Scan})}
+Skenario ini dirancang untuk menguji fitur \textit{Batch Processing} dan pencegahan balapan proses (\textit{Race Condition Prevention}) pada lapisan \textit{middleware}. Pengujian dilakukan dengan melakukan pemindaian wajah beruntun oleh dua orang dalam jeda waktu kurang dari 10 detik (di dalam satu interval \textit{cron job}). Hasil pengujian pada Tabel \ref{tab:test_rapid_scan} menunjukkan bahwa sistem mampu menyerap seluruh log aktivitas secara atomik tanpa ada data yang tertunda atau hilang.
+
+\input{tables/tab_test_rapid_scan}
 
 \section{Evaluasi Audit Keamanan dan Penanganan Anomali}
 \label{sec:evaluasi_keamanan}
 Evaluasi ini memvalidasi kriteria keberhasilan ketiga (K-3), yaitu efektivitas sistem dalam mendeteksi upaya akses yang tidak sah dan implementasi perlindungan privasi. Pengujian disimulasikan melalui kejadian pelanggaran akses pada terminal, dengan hasil yang dirangkum pada Tabel \ref{tab:test_security}.
 
-\begin{table}[t]
-\centering
-\caption{Hasil Pengujian Deteksi Anomali dan Audit Keamanan}
-\label{tab:test_security}
-\begin{tabular}{|l|p{5.2cm}|p{3.5cm}|c|}
-\hline
-\textbf{Skenario} & \textbf{Aktivitas Simulasi} & \textbf{Respon Sistem} & \textbf{Status} \\ \hline
-Deteksi Wajah Asing & Subjek tidak terdaftar mencoba memindai wajah di terminal. & Muncul notifikasi anomali dan sistem mengunduh foto bukti secara otomatis. & Lulus \\ \hline
-Kartu Tidak Terdaftar & Penempelan kartu yang tidak terdata pada pembaca kartu. & Sistem mencatat log penolakan akses. & Lulus \\ \hline
-Verifikasi Visual & Petugas membuka dialog rincian kejadian log anomali. & Menampilkan \textit{snapshot} kejadian secara presisi untuk audit manual. & Lulus \\ \hline
-Verifikasi Privasi & Karyawan terdaftar melakukan akses secara normal. & Sistem mencatat log tanpa mengunduh foto bukti (\textit{privacy-by-default}). & Lulus \\ \hline
-\end{tabular}
-\end{table}
+\input{tables/tab_test_security}
 
 Kemampuan sistem membedakan log reguler dengan log anomali mengonfirmasi keberhasilan penerapan prinsip minimasi data. Sistem terbukti hanya menyimpan \textit{snapshot} foto pada peladen ketika terjadi pelanggaran akses, menjaga privasi data biometrik karyawan dalam kondisi normal.
 
 \begin{figure}[t]
     \centering
-    % \includegraphics[width=0.6\textwidth]{images/bukti_anomali_snapshot.png}
-    \vspace{5cm}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/bukti_anomali_snapshot_1.png}
+        \caption{Wajah Asing 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/bukti_anomali_snapshot_2.png}
+        \caption{Wajah Asing 2}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/bukti_anomali_snapshot_3.png}
+        \caption{Wajah Asing 3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/bukti_anomali_snapshot_4.png}
+        \caption{Wajah Asing 4}
+    \end{subfigure}
     \caption{Bukti Verifikasi Anomali: Foto Tangkapan Kamera Terminal Saat Akses Ditolak}
     \label{fig:bukti_anomali}
 \end{figure}
@@ -143,3 +135,4 @@ Rangkaian evaluasi menunjukkan bahwa sebagian besar fungsi sistem manajemen akse
 
 Meskipun demikian, integrasi sinkronisasi data biometrik (foto wajah) secara nirkabel belum berhasil dicapai akibat kendala kompatibilitas protokol dengan \textit{firmware} perangkat keras yang digunakan. Terlepas dari keterbatasan tersebut, perancangan \textit{middleware} ini memberikan fondasi yang kuat bagi pengelola gedung untuk memusatkan administrasi identitas dan pemantauan pergerakan karyawan tanpa ketergantungan penuh pada perangkat lunak bawaan vendor.
 
+Secara metodologis, fase evaluasi ini merupakan perwujudan dari tahap \textit{Test} dalam kerangka kerja \textit{Design Thinking} yang diadopsi dalam penelitian ini. Hasil pengujian fungsional dan performa yang telah dipaparkan membuktikan bahwa purwarupa sistem yang dirancang pada tahap \textit{Ideate} dan dibangun pada tahap \textit{Prototype} telah berhasil menjawab akar permasalahan yang diidentifikasi pada tahap \textit{Empathize} dan \textit{Define}. Keberhasilan sinkronisasi data dan penyajian log \textit{real-time} secara langsung menyelesaikan hambatan interoperabilitas dan ketiadaan visibilitas data yang sebelumnya menjadi kendala operasional utama di Gedung ITB Innovation Park.

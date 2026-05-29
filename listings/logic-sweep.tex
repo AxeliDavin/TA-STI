@@ -1,6 +1,5 @@
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[language=bash, caption={Logika Pembersihan Data pada \texttt{CronService}}, label={lst:logic_sweep}, frame=single, captionpos=t]
-// Pembersihan identitas yang tidak ada di perangkat
 const { count: deletedCount } = await this.prisma.person.deleteMany({
   where: { 
     last_synced_at: { lt: syncStartTime },

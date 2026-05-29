@@ -4,7 +4,42 @@
 \cleardoublepage
 \chapter{PENUTUP}
 \label{chap:penutup}
+
+Bab ini menyajikan kesimpulan dari seluruh rangkaian penelitian serta merumuskan rencana tindak lanjut yang mencakup langkah pengembangan, kebutuhan persiapan, hingga analisis risiko dan mitigasi untuk keberlanjutan sistem di masa depan.
+
 \section{Kesimpulan}
-Jelaskan secara detail langkah-langkah rencana selanjutnya, hal-hal yang diperlukan atau akan disiapkan, dan risiko dan mitigasinya, yang meliputi:
+Berdasarkan hasil perancangan, implementasi, dan evaluasi yang telah dilakukan, dapat ditarik beberapa kesimpulan utama sebagai berikut:
+\begin{enumerate}
+    \item Arsitektur \textit{middleware} berbasis NestJS dan protokol ISAPI berhasil mengatasi hambatan interoperabilitas antara perangkat keras kontrol akses vendor Hikvision dengan sistem manajemen terpusat. Sistem mampu melakukan sinkronisasi data identitas tekstual (Nama dan ID) ke titik kontrol terpusat dan mengonsolidasikan manajemen pendaftaran multiterminal ke dalam satu antarmuka \textit{dashboard}, meskipun proses propagasi data antar-unit gerbang saat ini masih memerlukan inisiasi sinkronisasi manual pada lapisan kontrol fisik.
+    \item Implementasi komunikasi asinkron melalui \textit{cron job} dan \textit{Socket.IO} terbukti efektif dalam menyajikan visibilitas log pergerakan karyawan secara \textit{real-time}. Hasil pengujian menunjukkan diseminasi data memiliki latensi rata-rata sebesar 11.285 ms (sekitar 11,28 detik), yang mana waktu tunggu ini secara teknis diakibatkan oleh interval siklus penarikan data berkala setiap 10 detik, namun masih tergolong sangat wajar dan memenuhi kriteria responsivitas untuk kebutuhan pemantauan keamanan gedung.
+    \item Mekanisme deteksi anomali yang dirancang berhasil meningkatkan akuntabilitas audit keamanan dengan secara otomatis menangkap bukti visual (\textit{snapshot}) pada setiap kejadian pelanggaran akses, dengan tetap menjaga privasi data biometrik pada kondisi normal.
+    \item Terdapat batasan teknis pada integrasi foto wajah nirkabel dikarenakan ketidaksesuaian parser \textit{multipart boundary} pada \textit{firmware} perangkat keras. Meskipun demikian, arsitektur sistem telah dipersiapkan secara modular sehingga siap mendukung sinkronisasi visual penuh di masa mendatang.
+\end{enumerate}
+
+\section{Rencana Tindak Lanjut dan Pengembangan}
+Untuk menjamin keberlanjutan dan peningkatan kualitas sistem, berikut adalah rincian rencana pengembangan selanjutnya:
+
+\subsection{Langkah-langkah Rencana Selanjutnya}
+\begin{enumerate}
+    \item Eksplorasi Protokol Visual: Melakukan pengujian mendalam terhadap skema pengiriman data biner ISAPI menggunakan alat bantu \textit{low-level network debugger} untuk memetakan struktur \textit{boundary} yang diharapkan oleh \textit{firmware} terminal.
+    \item Integrasi Sistem HRIS: Melakukan pemetaan titik integrasi dengan basis data kepegawaian pusat (HRIS) untuk otomatisasi pembaruan data karyawan tanpa input manual di \textit{middleware}.
+    \item Skalasi Multigedung: Melakukan konfigurasi layanan dalam arsitektur \textit{microservices} agar sistem dapat mengelola ribuan terminal gerbang di beberapa lokasi gedung secara bersamaan.
+\end{enumerate}
+
+\subsection{Risiko dan Mitigasi}
+\begin{enumerate}
+    \item Kegagalan sinkronisasi foto wajah berkelanjutan akibat batasan pabrikan: Mitigasi dilakukan dengan mengoptimalkan penggunaan aset foto profil lokal di sisi \textit{middleware} untuk kebutuhan verifikasi manual pada \textit{dashboard}, sehingga fungsi audit visual tetap berjalan tanpa bergantung pada memori terminal.
+    \item Lonjakan beban trafik yang memicu keterlambatan penyajian log (\textit{lag}): Mitigasi dilakukan melalui implementasi mekanisme \textit{message broker} atau sistem antrean dalam memori (seperti Redis) untuk menahan dan mengelola beban pemrosesan log sebelum disimpan secara permanen ke basis data.
+    \item Gangguan koneksi jaringan lokal antara peladen dan terminal gerbang: Mitigasi dilakukan dengan menerapkan logika pemeriksaan status koneksi (\textit{health check}) yang lebih agresif beserta fitur pengiriman notifikasi instan kepada tim IT gedung (misalnya melalui integrasi \textit{bot} Telegram) saat terminal terdeteksi luring (\textit{offline}).
+\end{enumerate}
+
 \section{Saran}
-asdfas
+Berdasarkan hasil penelitian yang telah dicapai, terdapat beberapa saran untuk pengembangan selanjutnya, antara lain:
+\begin{enumerate}
+    \item Pengembangan algoritma analitik tingkat lanjut untuk mendeteksi perilaku anomali pengguna secara proaktif, seperti deteksi pelanggaran \textit{piggybacking} (satu akses digunakan oleh lebih dari satu orang pada waktu bersamaan).
+    \item Penguatan lapisan enkripsi komunikasi pada jaringan internal bangunan cerdas melalui implementasi sertifikat TLS/SSL kustom yang diakui oleh otoritas gedung.
+    \item Pengembangan modul notifikasi keamanan otomatis berbasis aplikasi perpesanan instan untuk menyebarkan peringatan tangkapan wajah anomali (wajah asing) secara \textit{real-time} kepada gawai petugas keamanan di lapangan.
+    \item Optimasi struktur basis data untuk mendukung mekanisme penyimpanan nama karyawan pada saat kejadian (\textit{historical name snapshotting}) di dalam tabel log, guna memastikan akuntabilitas riwayat tetap terjaga meskipun terjadi perubahan data master pada nomor identitas yang sama di masa depan.
+    \item Pengembangan fitur otorisasi tingkat lanjut yang memungkinkan pengaturan hak akses pengguna pada perangkat kontroler secara granular berdasarkan parameter area fisik, serta pembatasan akses menurut jadwal tanggal dan waktu tertentu.
+    \item Pengembangan skema basis data dan antarmuka \textit{dashboard} untuk mengakomodasi atribut kolom \textit{tenant}. Hal ini secara spesifik direkomendasikan untuk memenuhi kebutuhan administratif pengelola gedung dalam memfilter, melacak, dan mengelompokkan log pergerakan personel berdasarkan entitas perusahaan (\textit{tenant}) penyewa ruang, guna mempermudah rekapitulasi data okupansi di Gedung IIP.
+\end{enumerate}

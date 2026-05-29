@@ -1,26 +1,27 @@
-\begin{table}[t]
+\begin{table}[htbp]
     \centering
-    \caption{Rancangan Integrasi Protokol ISAPI (Outbound)}
+    \caption{Rancangan Integrasi Protokol ISAPI (\textit{Outbound})}
     \label{tab:api_isapi}
-    \begin{tabular}{|l|c|p{8cm}|}
+    \small
+    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{6cm}|c|X|}
         \hline
         \textbf{ISAPI Path} & \textbf{Metode} & \textbf{Tujuan Operasi} \\
         \hline
-        /ISAPI/AccessControl/AcsEvent & POST & Melakukan pemindaian (\textit{polling}) terhadap log kejadian terbaru. \\
+        \texttt{/ISAPI/\allowbreak AccessControl/\allowbreak AcsEvent} & POST & Melakukan pemindaian (polling) terhadap log kejadian terbaru. \\
         \hline
-        /ISAPI/AccessControl/AcsWorkStatus & GET & Memantau status kesehatan terminal dan kondisi kunci pintu secara \textit{real-time}. \\
+        \texttt{/ISAPI/\allowbreak AccessControl/\allowbreak AcsWorkStatus} & GET & Memantau status kesehatan terminal dan kondisi kunci pintu secara real-time. \\
         \hline
-        /ISAPI/AccessControl/UserInfo/Record & POST/PUT & Menambahkan atau memperbarui identitas subjek pada memori terminal. \\
+        \texttt{/ISAPI/\allowbreak AccessControl/\allowbreak UserInfo/\allowbreak Record} & POST/PUT & Menambahkan atau memperbarui identitas subjek pada memori terminal. \\
         \hline
-        /ISAPI/AccessControl/UserInfo/Search & POST & Menarik daftar ID karyawan yang terdaftar untuk fase \textit{Mark}. \\
+        \texttt{/ISAPI/\allowbreak AccessControl/\allowbreak UserInfo/\allowbreak Search} & POST & Menarik daftar ID karyawan yang terdaftar untuk fase Mark. \\
         \hline
-        /ISAPI/AccessControl/UserInfo/Delete & PUT & Mencabut hak akses subjek dari perangkat keras. \\
+        \texttt{/ISAPI/\allowbreak AccessControl/\allowbreak UserInfo/\allowbreak Delete} & PUT & Mencabut hak akses subjek dari perangkat keras. \\
         \hline
-        /ISAPI/AccessControl/RemoteControl/door/1 & PUT & Melakukan instruksi pembukaan pintu secara jarak jauh (\textit{remote open}). \\
+        \texttt{/ISAPI/\allowbreak AccessControl/\allowbreak RemoteControl/\allowbreak door/1} & PUT & Melakukan instruksi pembukaan pintu secara jarak jauh (remote open). \\
         \hline
-        /ISAPI/Intelligent/FDLib/FaceDataRecord & POST/PUT & Melakukan transmisi data biner (\textit{multipart}) untuk pembaruan profil wajah pada pustaka biometrik terminal. \\
+        \texttt{/ISAPI/\allowbreak Intelligent/\allowbreak FDLib/\allowbreak FaceDataRecord} & POST/PUT & Melakukan transmisi data biner (multipart) untuk pembaruan profil wajah pada terminal. \\
         \hline
-        /ISAPI/.../picture/... & GET & Mengunduh aset biner foto kejadian anomali berdasarkan referensi URL dinamis dari log terminal. \\
+        \texttt{/ISAPI/\allowbreak .../\allowbreak picture/\allowbreak ...} & GET & Mengunduh aset biner foto kejadian anomali berdasarkan referensi URL dinamis. \\
         \hline
-    \end{tabular}
+    \end{tabularx}
 \end{table}

@@ -5,17 +5,28 @@
 % metode pemilihan solusi yang diusulkan.
 % ============================================================================================
 \cleardoublepage
-\chapter{ANALISIS MASALAH}
-\label{chap:analisis-masalah}
-Bab ini membahas secara mendalam analisis masalah yang terdapat pada sistem manajemen akses fisik saat ini di Gedung ITB Innovation Park (IIP), analisis kebutuhan untuk menyelesaikan masalah tersebut, serta analisis pemilihan solusi teknologi yang diusulkan. Secara garis besar, bab ini menguraikan deskripsi hasil analisis dari persoalan keterisolasian data akses karyawan, penjelasan tentang solusi pengembangan middleware ISAPI dan dashboard web pada level konsep desain, serta penjabaran pendekatan rekayasa perangkat lunak yang dipilih untuk merealisasikan solusi tersebut. Alur pembahasan pada bab ini dibagi ke dalam tiga bagian utama, yaitu analisis kondisi sistem kontrol akses saat ini, identifikasi kebutuhan fungsional dan non-fungsional sistem baru, dan diakhiri dengan analisis penentuan alternatif solusi teknologi yang paling optimal.
+\chapter{ANALISIS MASALAH DAN KEBUTUHAN}
+\label{chap:analisis}
+Bab ini membahas secara mendalam analisis masalah yang terdapat pada sistem manajemen akses fisik saat ini di Gedung ITB Innovation Park (IIP), analisis kebutuhan untuk menyelesaikan masalah tersebut, serta analisis pemilihan solusi teknologi yang diusulkan. Alur pembahasan pada bab ini disusun berdasarkan hasil investigasi lapangan yang dilakukan secara bertahap guna memastikan solusi yang dirancang tepat sasaran.
+
+\section{Metodologi Pengumpulan Data}
+Analisis dalam penelitian ini didasarkan pada data primer dan sekunder yang dikumpulkan melalui tiga metode utama. Proses ini merupakan perwujudan dari tahap \textit{Empathize} dan \textit{Define} dalam kerangka kerja \textit{Design Thinking} yang diadopsi.
+
+\subsection{Observasi Fisik dan Survei Lapangan}
+Investigasi dimulai dengan melakukan peninjauan langsung terhadap infrastruktur kontrol akses di Gedung IIP. Observasi difokuskan pada pemetaan sebaran 6 (enam) unit terminal biometrik di area lobi utama serta jalur komunikasi kabel LAN yang menghubungkan perangkat keras dengan stasiun kerja resepsionis. Melalui survei ini, diidentifikasi adanya keterbatasan visibilitas data karena sistem yang berjalan masih bersifat lokal dan terisolasi (\textit{standalone}).
+
+\subsection{Wawancara Mendalam (\textit{In-depth Interview})}
+Untuk menggali kebutuhan operasional secara riil, dilakukan serangkaian wawancara terstruktur dengan pihak pengelola gedung dan perwakilan dari Direktorat Kawasan Sains dan Teknologi - DKST. Wawancara dilaksanakan dalam 5 (lima) sesi utama yang mencakup pembahasan mengenai alur masuk penghuni, koordinasi teknis instalasi, integrasi BMS, hingga kebijakan privasi visual. Seluruh transkrip dan dokumentasi foto dari sesi wawancara ini dapat dilihat pada Lampiran A hingga Lampiran E.
+
+\subsection{Studi Dokumentasi Teknis}
+Selain data lapangan, dilakukan analisis terhadap dokumentasi resmi protokol \textit{Intelligent Security API} (ISAPI) dari vendor Hikvision. Studi ini bertujuan untuk memetakan skema JSON/XML yang diperlukan untuk melakukan penarikan log dan pendaftaran subjek secara nirkabel, guna menjamin interoperabilitas antara perangkat lunak kustom dengan perangkat keras industrial.
 
 \section{Analisis Kondisi Saat Ini}
 Pengelolaan akses fisik di Gedung ITB Innovation Park (IIP) saat ini berpusat pada area lobi utama yang merupakan jalur perlintasan utama personel. Berdasarkan hasil survei lapangan, alur operasional dan kondisi sistem kontrol akses saat ini divisualisasikan pada Gambar \ref{fig:diagram_alir_saat_ini} (Diagram Alir Proses Saat Ini) dan dijabarkan sebagai berikut:
 
 \begin{figure}[t]
     \centering
-    % \includegraphics[width=0.8\textwidth]{images/diagram_alir_saat_ini.png}
-    \vspace{4cm} % Placeholder untuk Diagram Alir Proses Saat Ini
+    \includegraphics[width=0.8\textwidth]{images/diagram_alir_saat_ini.png}
     \caption{Diagram Alir Proses Manajemen Akses Saat Ini}
     \label{fig:diagram_alir_saat_ini}
 \end{figure}
@@ -24,7 +35,16 @@ Pengelolaan akses fisik di Gedung ITB Innovation Park (IIP) saat ini berpusat pa
 Area lobi dilengkapi dengan tiga jalur (lane) gerbang pembatas. Untuk mendukung fleksibilitas otentikasi, terdapat total 6 (enam) unit terminal akses biometrik yang terpasang (2 unit per jalur untuk akses masuk dan keluar). Seluruh perangkat tersebut telah mendukung teknologi pemindaian wajah (face recognition), kartu RFID, dan pemindaian sidik jari (fingerprint). Saat ini, terminal-terminal tersebut telah beroperasi normal dan tersinkronisasi secara internal di dalam ekosistem perangkat keras vendor.
 
 \subsection{Arsitektur Pengelolaan Data Saat Ini}
-Seluruh 6 terminal di lobi terhubung melalui jaringan LAN lokal ke satu unit komputer di area lobi yang bertindak sebagai PC Resepsionis. Komputer ini menjalankan perangkat lunak proprietary vendor (iVMS-4200) yang berfungsi sebagai server lokal untuk konfigurasi perangkat dan penarikan data log. (Catatan Batasan: Meskipun terdapat akses masuk melalui area basemen menggunakan teknologi sidik jari, area tersebut tidak termasuk dalam ruang lingkup penelitian ini dan tidak diberikan solusi dalam pengembangan sistem pada tugas akhir ini. Fokus penelitian sepenuhnya diarahkan pada integrasi web untuk keenam terminal di area lobi utama).
+Seluruh 6 terminal di lobi terhubung melalui jaringan LAN lokal ke satu unit komputer di area lobi yang bertindak sebagai PC Resepsionis. Komputer ini menjalankan perangkat lunak \textit{proprietary} vendor (iVMS-4200) yang berfungsi sebagai server lokal untuk konfigurasi perangkat dan penarikan data log. Visualisasi arsitektur jaringan yang terfragmentasi saat ini dapat dilihat pada Gambar \ref{fig:arsitektur_jaringan_sebelum}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/arsitektur_jaringan_sebelum.png}
+    \caption{Arsitektur Jaringan dan Aliran Data yang Terisolasi (\textit{Data Silo})}
+    \label{fig:arsitektur_jaringan_sebelum}
+\end{figure}
+
+(Catatan Batasan: Meskipun terdapat akses masuk melalui area basemen menggunakan teknologi sidik jari, area tersebut tidak termasuk dalam ruang lingkup penelitian ini dan tidak diberikan solusi dalam pengembangan sistem pada tugas akhir ini. Fokus penelitian sepenuhnya diarahkan pada integrasi web untuk keenam terminal di area lobi utama).
 
 \subsection{Model Konseptual Sistem Saat Ini}
 Mengacu pada teori sistem informasi menurut Laudon dan Laudon (2020), model konseptual sistem saat ini di Gedung IIP memiliki komponen sebagai berikut:
@@ -40,7 +60,7 @@ Berdasarkan analisis alur dan arsitektur di atas, masalah fundamental yang ditem
 \begin{enumerate}
     \item Akses Data yang Terisolasi (Silo): Meskipun operasional keenam terminal di lobi sudah berjalan dengan baik, data pergerakan log personel hanya dapat dipantau melalui satu PC Resepsionis di lobi. Pihak manajemen atau unit keamanan gedung tidak memiliki sarana untuk memantau lalu lintas karyawan secara real-time melalui peramban web dari ruangan mereka masing-masing.
     \item Ketergantungan pada Perangkat Lunak Vendor (Vendor Lock-in): Pengelolaan data sepenuhnya bergantung pada aplikasi desktop vendor yang memiliki antarmuk   a kaku. Hal ini menyulitkan upaya kustomisasi pengelolaan data karyawan dan menghambat integrasi log akses ke dalam dashboard manajemen gedung cerdas (Smart Building) yang sedang dikembangkan secara internal oleh pihak IIP.
-    \item Kesulitan Investigasi Kejadian Anomali: Ketika terjadi kejadian akses yang ditolak (seperti wajah tidak dikenali), pengelola tidak dapat meninjau bukti rekaman visual (snapshot) kejadian tersebut dari jarak jauh. Investigasi terhadap anomali mengharuskan petugas keamanan untuk memeriksa langsung melalui PC Resepsionis di lobi, yang mana proses ini sangat tidak efisien untuk operasional gedung skala besar.
+    \item Kesulitan Investigasi Kejadian Anomali:   ka terjadi kejadian akses yang ditolak (seperti wajah tidak dikenali), pengelola tidak dapat meninjau bukti rekaman visual (snapshot) kejadian tersebut dari jarak jauh. Investigasi terhadap anomali mengharuskan petugas keamanan untuk memeriksa langsung melalui PC Resepsionis di lobi, yang mana proses ini sangat tidak efisien untuk operasional gedung skala besar.
     \item Kerentanan Keamanan Siber BGC: Arsitektur yang terfragmentasi saat ini memiliki celah kerentanan dalam transit data biometrik. Tanpa adanya lapisan pelindung (\textit{Reverse Proxy}) dan enkripsi standar yang terpusat, pertukaran data antara terminal gerbang dan aplikasi lokal rentan terhadap upaya intersepsi data (\textit{man-in-the-middle attack}) yang melanggar standar keamanan siber Bangunan Gedung Cerdas.
 \end{enumerate}
 

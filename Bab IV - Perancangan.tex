@@ -35,10 +35,9 @@ Sistem ini dirancang menggunakan pendekatan Arsitektur Tiga Lapis (\textit{Three
 \subsection{Arsitektur Jaringan dan Keamanan Siber (\textit{Network \& Security Architecture})}
 Untuk memenuhi standar keamanan siber Bangunan Gedung Cerdas (BGC), topologi jaringan dirancang agar sistem terisolasi dan terlindungi dari akses publik yang tidak sah. Gambar \ref{fig:arsitektur_jaringan} mengilustrasikan topologi jaringan sistem.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.8\textwidth]{images/arsitektur_jaringan.png}
-    \vspace{4cm} % Placeholder tinggi gambar
+    \includegraphics[width=0.8\textwidth]{images/arsitektur_jaringan_sesudah.png}
     \caption{Desain Arsitektur Jaringan dan Lapisan Keamanan}
     \label{fig:arsitektur_jaringan}
 \end{figure}
@@ -61,8 +60,7 @@ Hubungan antar data dalam sistem ini berpusat pada entitas \textit{person} yang 
 
 \begin{figure}[t]
     \centering
-    % \includegraphics[width=0.9\textwidth]{images/erd_sistem.png}
-    \vspace{4cm} % Placeholder untuk gambar ERD
+    \includegraphics[width=0.9\textwidth]{images/erd_sistem.png}
     \caption{Entity Relationship Diagram (ERD) Sistem Manajemen Akses}
     \label{fig:erd_sistem}
 \end{figure}
@@ -86,24 +84,17 @@ Untuk menjaga kualitas data, sistem menerapkan standarisasi nilai melalui penggu
     \item Integritas Riwayat Akses: Sistem menerapkan aturan \textit{Restricted Delete} pada relasi antara profil karyawan dan log pergerakan. Hal ini memastikan bahwa riwayat akses tidak akan hilang dari basis data meskipun data identitas karyawan dihapus dari memori terminal gerbang, guna menjaga akuntabilitas audit keamanan.
     \item Strategi \textit{Safe Sweep}: Sebagai bagian dari integritas data, penghapusan otomatis terhadap profil yang tidak lagi terdeteksi di perangkat keras melalui algoritma \textit{Mark \& Sweep} hanya akan dilakukan jika subjek tersebut tidak memiliki riwayat log akses dalam basis data. Hal ini menjamin bahwa seluruh data transaksi masa lalu tetap tersimpan secara utuh untuk kebutuhan investigasi keamanan siber.
     \item Mekanisme Pembersihan Atomik: Sistem menjamin kebersihan data melalui prosedur penghapusan serentak. Ketika sebuah profil karyawan dihapus melalui antarmuka web, \textit{middleware} secara otomatis mencabut hak akses pada memori fisik terminal, menghapus rekaman terkait di basis data, serta memusnahkan file fisik foto profil dari media penyimpanan server guna mematuhi prinsip minimasi data.
+    \item Kebijakan Nomor Identitas Unik: Guna menjamin validitas riwayat akses jangka panjang, sistem menetapkan aturan bahwa nomor identitas (\textit{employeeNo}) bersifat unik dan tidak dapat digunakan kembali (\textit{non-reusable}) untuk personil yang berbeda di masa mendatang. Hal ini krusial untuk mencegah ketidaksinkronan data di mana riwayat log lama tetap terasosiasi dengan nama pemilik terbaru pada ID yang sama.
 \end{enumerate}
 
 \section{Perancangan Logika Program}
 Perancangan logika program mendefinisikan alur kerja otomatisasi pada lapisan aplikasi (\textit{middleware}) untuk menjalankan fungsi sinkronisasi data dan pemrosesan kejadian akses secara mandiri.
 
 \subsection{Logika Sinkronisasi Identitas (\textit{Mark \& Sweep})}
-Untuk menjaga konsistensi data antara basis data server dengan memori terminal gerbang, sistem menerapkan algoritma \textit{Mark \& Sweep}. Logika ini bekerja dalam dua fase utama. Pertama, fase \textit{mark} (penandaan) di mana sistem menarik seluruh daftar ID karyawan dari terminal dan memperbarui stempel waktu sinkronisasi (\textit{last synced at}) pada tabel \textit{person}. Kedua, fase \textit{sweep} (penyisiran) di mana sistem mencari rekaman yang stempel waktunya tidak diperbarui pada fase pertama, yang mengindikasikan bahwa data tersebut telah dihapus secara manual dari terminal gerbang. Sistem kemudian akan menghapus rekaman tersebut dari basis data server secara otomatis (dengan tetap memperhatikan integritas riwayat log). Alur algoritma ini diilustrasikan pada Gambar \ref{fig:flowchart_mark_sweep}.
-
-\begin{figure}[t]
-    \centering
-    % \includegraphics[width=0.7\textwidth]{images/flowchart_mark_sweep.png}
-    \vspace{4cm} % Placeholder untuk flowchart Mark & Sweep
-    \caption{Diagram Alir Algoritma \textit{Mark \& Sweep}}
-    \label{fig:flowchart_mark_sweep}
-\end{figure}
+Untuk menjaga konsistensi data antara basis data server dengan memori terminal gerbang, sistem menerapkan algoritma \textit{Mark \& Sweep}. Logika ini bekerja dalam dua fase utama. Pertama, fase \textit{mark} (penandaan) di mana sistem menarik seluruh daftar ID karyawan dari terminal dan memperbarui stempel waktu sinkronisasi (\textit{last synced at}) pada tabel \textit{person}. Kedua, fase \textit{sweep} (penyisiran) di mana sistem mencari rekaman yang stempel waktunya tidak diperbarui pada fase pertama, yang mengindikasikan bahwa data tersebut telah dihapus secara manual dari terminal gerbang. Sistem kemudian akan menghapus rekaman tersebut dari basis data server secara otomatis (dengan tetap memperhatikan integritas riwayat log). 
 
 \subsection{Logika Pemrosesan Kejadian Akses dan Deteksi Anomali}
-Sistem melakukan pemantauan lalu lintas secara aktif melalui mekanisme penjadwalan setiap 10 detik. Logika ini dirancang untuk menarik seluruh kejadian terbaru (\textit{AcsEvent}) dari protokol ISAPI. Setiap log yang ditarik akan melewati proses validasi untuk menghindari duplikasi data berdasarkan nomor seri kejadian (\textit{serialNo}). Jika sistem mendeteksi kejadian dengan kode \textit{minor} yang mengindikasikan kegagalan akses (misalnya wajah tidak terdaftar atau periode validitas habis), sistem secara otomatis memicu fungsi pengambilan data biner untuk mengunduh foto cuplikan (\textit{snapshot}) pelaku dari terminal. Hasil pemrosesan log ini kemudian dikirimkan ke \textit{dashboard} melalui jalur \textit{Socket.IO} secara \textit{real-time}. Diagram alir pemrosesan log dapat dilihat pada Gambar \ref{fig:flowchart_event_polling}.
+Sistem melakukan pemantauan lalu lintas secara aktif melalui mekanisme penjadwalan setiap 10 detik. Logika ini dirancang untuk menarik seluruh kejadian terbaru (\textit{AcsEvent}) dari protokol ISAPI. Setiap log yang ditarik akan melewati proses validasi untuk menghindari duplikasi data berdasarkan nomor seri kejadian (\textit{serialNo}). Jika sistem mendeteksi kejadian dengan kode \textit{minor} yang mengindikasikan kegagalan akses (misalnya wajah tidak terdaftar atau periode validitas habis), sistem secara otomatis memicu fungsi pengambilan data biner untuk mengunduh foto cuplikan (\textit{snapshot}) pelaku dari terminal. Hasil pemrosesan log ini kemudian dikirimkan ke \textit{dashboard} melalui jalur \textit{Socket.IO} secara \textit{real-time}. 
 
 Untuk menjamin keandalan (\textit{reliability}) arsitektur ini pada lingkungan operasional fisik, logika penjadwalan juga dilengkapi dengan beberapa mekanisme tambahan:
 \begin{enumerate}
@@ -122,14 +113,6 @@ Untuk menjamin keandalan (\textit{reliability}) arsitektur ini pada lingkungan o
     \item Logika Konstruksi Protokol Manual (\textit{Custom Multipart Handling}): Untuk mengatasi ketatnya pembacaan data biner pada \textit{firmware} terminal, sistem tidak menggunakan pustaka pengiriman file standar. \textit{Middleware} merangkai struktur \textit{boundary} dan \textit{metadata header} secara manual pada level biner guna menjamin kompatibilitas permintaan pengunggahan data wajah yang spesifik terhadap parser protokol perangkat keras.
 \end{enumerate}
 
-\begin{figure}[t]
-    \centering
-    % \includegraphics[width=0.7\textwidth]{images/flowchart_event_polling.png}
-    \vspace{4cm} % Placeholder untuk flowchart Event Polling
-    \caption{Diagram Alir Pemrosesan Kejadian Akses dan Deteksi Anomali}
-    \label{fig:flowchart_event_polling}
-\end{figure}
-
 \subsection{Logika Agregasi Visual Dashboard}
 Untuk meningkatkan keterbacaan data bagi administrator, sistem menerapkan logika agregasi visual pada antarmuka pemantauan. Beberapa kejadian akses (masuk dan keluar) dari subjek yang sama pada hari operasional yang sama dikonsolidasikan menjadi satu baris informasi profil tunggal. Baris tersebut dilengkapi dengan linimasa pergerakan kronologis (\textit{timeline chips}), sehingga memudahkan pengelola dalam meninjau rincian aktivitas harian personel tanpa menyebabkan penumpukan baris data (\textit{data clutter}) pada layar.
 
@@ -146,7 +129,6 @@ Perancangan antarmuka pengguna (\textit{UI/UX}) diarahkan untuk memberikan kemud
 Halaman ini merupakan pusat kendali operasional yang menyajikan data pergerakan log secara \textit{real-time}. Rancangan halaman ini terdiri dari beberapa komponen utama:
 \begin{enumerate}
     \item Widget Jam Digital (\textit{Live Clock WIB}): Komponen penunjuk waktu \textit{real-time} yang berfungsi sebagai acuan tunggal zona waktu Asia/Jakarta untuk seluruh aktivitas sinkronisasi data.
-    \item Ringkasan Statistik: Menyajikan kartu informasi yang menunjukkan jumlah subjek yang berada di dalam gedung dan jumlah kejadian anomali pada hari berjalan.
     \item Grafik Tren Aktivitas: Visualisasi dalam bentuk diagram batang yang menyajikan tren lalu lintas pergerakan (\textit{in/out}) dan kejadian anomali setiap jam. Komponen ini dilengkapi dengan fitur penanda jam aktif (\textit{Active Hour Highlight}) yang memberikan aksen visual berbeda pada waktu berjalan guna mempermudah pemantauan fluktuasi trafik harian.
     \item Daftar Agregasi Pergerakan: Komponen visual yang menyajikan data secara terkelompok berdasarkan subjek (\textit{person-centric}). Setiap profil dilengkapi dengan deretan penanda (\textit{timeline chips}) yang meringkas urutan waktu kejadian masuk dan keluar individu tersebut dalam satu hari operasional.
     \item Tabel Arsip Kronologis: Tabel dinamis yang menyajikan seluruh rekaman log secara berurutan berdasarkan waktu kejadian (\textit{event-centric}). Komponen ini berfungsi untuk kebutuhan audit mendalam dan terintegrasi langsung dengan fitur pencarian serta paginasi.
@@ -161,10 +143,9 @@ Halaman ini merupakan pusat kendali operasional yang menyajikan data pergerakan 
 
 Rancangan tata letak antarmuka pemantauan diilustrasikan pada Gambar \ref{fig:mockup_dashboard}.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.9\textwidth]{images/mockup_dashboard.png}
-    \vspace{4cm} % Placeholder untuk mockup dashboard
+    \includegraphics[width=0.9\textwidth]{images/mockup_dashboard.png}
     \caption{Rancangan Antarmuka Dashboard Pemantauan}
     \label{fig:mockup_dashboard}
 \end{figure}
@@ -182,24 +163,22 @@ Halaman ini dirancang untuk memfasilitasi administrasi data biometrik secara ter
     \item Umpan Balik Status (\textit{Status Toasts}): Penggunaan notifikasi ringkas (\textit{toasts}) untuk mengonfirmasi keberhasilan pendaftaran atau menjelaskan alasan kegagalan koneksi perangkat keras secara instan guna menjamin transparansi status operasi.
 \end{enumerate}
 
-Rancangan halaman manajemen identitas diilustrasikan pada Gambar \ref{fig:mockup_management}.
-
-\begin{figure}[t]
-    \centering
-    % \includegraphics[width=0.9\textwidth]{images/mockup_management.png}
-    \vspace{4cm} % Placeholder untuk mockup management
-    \caption{Rancangan Antarmuka Manajemen Profil Karyawan}
-    \label{fig:mockup_management}
-\end{figure}
-
 \subsection{Visualisasi Audit Anomali}
-Untuk mendukung fungsi investigasi keamanan, sistem menyertakan komponen visualisasi khusus untuk mendokumentasikan pelanggaran akses. Fitur ini diimplementasikan melalui dialog verifikasi keamanan (\textit{Security Verification Dialog}) yang muncul secara interaktif. Saat sensor gerbang mendeteksi anomali, sistem akan menyajikan foto cuplikan (\textit{snapshot}) wajah pelaku yang ditangkap secara otomatis oleh kamera gerbang dalam bingkai visual dengan aksen warna kontras (merah). Visualisasi ini menyertakan metadata rincian pelanggaran (waktu, lokasi gerbang, dan alasan penolakan), sehingga memungkinkan petugas keamanan melakukan verifikasi visual secara cepat guna mengidentifikasi pihak yang mencoba masuk tanpa izin yang sah.
+Untuk mendukung fungsi investigasi keamanan, sistem menyertakan komponen visualisasi khusus untuk mendokumentasikan pelanggaran akses. Fitur ini diimplementasikan melalui dialog verifikasi keamanan (\textit{Security Verification Dialog}) yang muncul secara interaktif. Saat sensor gerbang mendeteksi anomali, sistem akan menyajikan foto cuplikan (\textit{snapshot}) wajah pelaku yang ditangkap secara otomatis oleh kamera gerbang dalam bingkai visual dengan aksen warna kontras (merah). Visualisasi ini menyertakan metadata rincian pelanggaran (waktu, lokasi gerbang, and alasan penolakan), sehingga memungkinkan petugas keamanan melakukan verifikasi visual secara cepat guna mengidentifikasi pihak yang mencoba masuk tanpa izin yang sah.
 
 \section{Perancangan Antarmuka Komunikasi (API)}
 Perancangan antarmuka komunikasi mendefinisikan standar pertukaran data antar komponen dalam sistem manajemen akses. Jalur komunikasi dibagi menjadi tiga kategori utama untuk menjamin integritas fungsionalitas \textit{middleware}.
 
 \subsection{Arsitektur RESTful API}
-Komunikasi antara antarmuka pengguna (\textit{frontend}) dengan layanan pusat (\textit{backend}) dilakukan melalui protokol HTTP berbasis \textit{RESTful API}. Sistem mendukung dua format komunikasi utama: format JSON untuk pertukaran data tekstual reguler, serta format \textit{multipart/form-data} yang dikhususkan untuk transmisi data biometrik visual saat pendaftaran profil. Selain pengiriman data utama, respon API juga dilengkapi dengan metadata navigasi (seperti jumlah total rekaman dan informasi paginasi) untuk menjamin efisiensi komunikasi data saat \textit{frontend} menangani ribuan baris log riwayat pergerakan. Seluruh permintaan data tersebut dilindungi oleh lapisan otentikasi JWT pada setiap titik akhirnya. Sebagai catatan khusus, pada rute ekstraksi laporan (ekspor), token otentikasi dikirimkan melalui parameter kueri (\textit{query parameter}) untuk mengakomodasi batasan teknis pada mekanisme pengunduhan file melalui jendela peramban baru. Selain itu, sistem menerapkan kebijakan \textit{Cross-Origin Resource Sharing} (CORS) untuk membatasi interaksi API hanya pada domain resmi yang terdaftar guna mencegah eksploitasi akses dari sumber luar yang tidak sah. Untuk menjamin respon antarmuka yang instan, rute pemantauan status gerbang mengadopsi mekanisme penyimpanan sementara (\textit{Caching}). Server menyajikan data status kesehatan perangkat dari memori \textit{cache} yang diperbarui secara asinkron, sehingga meminimalkan beban komputasi langsung pada unit terminal saat terjadi permintaan akses data dari banyak klien secara serentak. Setiap respon API juga mengadopsi standar kode status HTTP (\textit{HTTP Status Codes}) guna memfasilitasi penanganan kesalahan dan umpan balik pengguna yang akurat pada sisi klien. Terakhir, sistem menerapkan mekanisme verifikasi kriptografi pada lapisan terluar antarmuka pengguna (\textit{Edge Security}). Menggunakan pustaka \textit{jose} pada \textit{middleware} Next.js, setiap permintaan data divalidasi keaslian tanda tangan tokennya secara mandiri sebelum diteruskan ke server pusat, guna mencegah upaya pemalsuan identitas administrator melalui manipulasi \textit{cookie} peramban. Khusus pada rute ekstraksi data, sistem melakukan pemetaan ulang (\textit{Mapping}) dari kolom basis data teknis menjadi label informasi administratif guna menghasilkan dokumen laporan CSV yang siap guna bagi pihak manajemen. Sistem juga mengadopsi pola agregasi respon (\textit{Response Aggregation}) pada operasi multiterminal, di mana \textit{backend} akan mengonsolidasikan hasil eksekusi dari seluruh gerbang fisik ke dalam satu objek informasi tunggal sebelum dikirimkan ke \textit{frontend} guna mempermudah penyajian status sinkronisasi harian pada antarmuka administrator. Rancangan rute API utama dirangkum dalam Tabel \ref{tab:api_restful}.
+Komunikasi antara antarmuka pengguna (\textit{frontend}) dengan layanan pusat (\textit{backend}) dilakukan melalui protokol HTTP berbasis \textit{RESTful API}. Sistem mendukung dua format komunikasi utama: format JSON untuk pertukaran data tekstual reguler, serta format \textit{multipart/form-data} yang dikhususkan untuk transmisi data biometrik visual saat pendaftaran profil. Selain pengiriman data utama, respon API juga dilengkapi dengan metadata navigasi (seperti jumlah total rekaman dan informasi paginasi) untuk menjamin efisiensi komunikasi data saat \textit{frontend} menangani ribuan baris log riwayat pergerakan. 
+
+Seluruh permintaan data tersebut dilindungi oleh lapisan otentikasi JWT pada setiap titik akhirnya. Sebagai catatan khusus, pada rute ekstraksi laporan (ekspor), token otentikasi dikirimkan melalui parameter kueri (\textit{query parameter}) untuk mengakomodasi batasan teknis pada mekanisme pengunduhan file melalui jendela peramban baru. Selain itu, sistem menerapkan kebijakan \textit{Cross-Origin Resource Sharing} (CORS) untuk membatasi interaksi API hanya pada domain resmi yang terdaftar guna mencegah eksploitasi akses dari sumber luar yang tidak sah. 
+
+Untuk menjamin respon antarmuka yang instan, rute pemantauan status gerbang mengadopsi mekanisme penyimpanan sementara (\textit{Caching}). Server menyajikan data status kesehatan perangkat dari memori \textit{cache} yang diperbarui secara asinkron, sehingga meminimalkan beban komputasi langsung pada unit terminal saat terjadi permintaan akses data dari banyak klien secara serentak. Setiap respon API juga mengadopsi standar kode status HTTP (\textit{HTTP Status Codes}) guna memfasilitasi penanganan kesalahan dan umpan balik pengguna yang akurat pada sisi klien. 
+
+Terakhir, sistem menerapkan mekanisme verifikasi kriptografi pada lapisan terluar antarmuka pengguna (\textit{Edge Security}). Menggunakan pustaka \textit{jose} pada \textit{middleware} Next.js, setiap permintaan data divalidasi keaslian tanda tangan tokennya secara mandiri sebelum diteruskan ke server pusat, guna mencegah upaya pemalsuan identitas administrator melalui manipulasi \textit{cookie} peramban. 
+
+Khusus pada rute ekstraksi data, sistem melakukan pemetaan ulang (\textit{Mapping}) dari kolom basis data teknis menjadi label informasi administratif guna menghasilkan dokumen laporan CSV yang siap guna bagi pihak manajemen. Sistem juga mengadopsi pola agregasi respon (\textit{Response Aggregation}) pada operasi multiterminal, di mana \textit{backend} akan mengonsolidasikan hasil eksekusi dari seluruh gerbang fisik ke dalam satu objek informasi tunggal sebelum dikirimkan ke \textit{frontend} guna mempermudah penyajian status sinkronisasi harian pada antarmuka administrator. Rancangan rute API utama dirangkum dalam Tabel \ref{tab:api_restful}.
 
 \input{tables/tab_api_restful}
 
@@ -209,9 +188,12 @@ Untuk mendukung visualisasi tanpa pemuatan ulang (\textit{refresh}), sistem meny
 \input{tables/tab_api_websocket}
 
 \subsection{Integrasi Protokol ISAPI}
-Interaksi antara server \textit{middleware} dengan perangkat keras terminal gerbang dilakukan melalui pemanggilan titik akhir (\textit{endpoint}) protokol ISAPI secara \textit{outbound}. Jalur ini digunakan untuk mengeksekusi perintah manajemen identitas dan penarikan log mentah. Seluruh integrasi dilakukan dengan menyertakan parameter kueri \textit{format=json} guna memastikan terminal memberikan respon dalam format yang terstandardisasi. Selain itu, permintaan data log dilakukan dengan menyertakan filter rentang waktu (\textit{Time-window Filtering}) yang spesifik, guna memastikan server hanya menarik rekaman terbaru dan menjaga efisiensi penggunaan lebar pita (\textit{bandwidth}) jaringan. Untuk menjamin efisiensi waktu pemrosesan harian, integrasi ISAPI juga dirancang menggunakan mekanisme orkestrasi paralel (\textit{Parallel Request Orchestration}). \textit{Middleware} melakukan pemanggilan titik akhir ke seluruh terminal gerbang secara serentak, sehingga total waktu eksekusi sinkronisasi tidak terakumulasi berdasarkan jumlah perangkat, melainkan hanya bergantung pada waktu respon terminal yang paling lambat. Mekanisme ini krusial untuk memastikan seluruh data dari keenam gerbang berhasil ditarik dalam jendela waktu penjadwalan 10 detik. Sistem juga menerapkan protokol pembungkusan data (\textit{JSON Wrapping}) yang berjenjang, di mana setiap informasi yang dikirimkan ke terminal disusun ke dalam objek \textit{root} spesifik guna memenuhi kriteria parser pada lapisan perangkat keras. Selain itu, sistem menerapkan aturan penyelarasan dialek protokol (\textit{Dialect Alignment}), di mana struktur data wajib mengikuti aturan penulisan kunci (\textit{Key Case-Sensitivity}) yang spesifik terhadap standar vendor (seperti penggunaan \textit{PascalCase} pada objek utama) guna memastikan instruksi dapat diuraikan secara tepat. Struktur integrasi ISAPI dirancang berdasarkan spesifikasi teknis vendor Hikvision sebagaimana tercantum dalam Tabel \ref{tab:api_isapi}. Selain itu, sistem menyertakan konfigurasi agen komunikasi yang fleksibel terhadap sertifikat keamanan perangkat keras pada jaringan lokal, memungkinkan pertukaran data terenkripsi (HTTPS) tetap berlangsung meskipun terminal menggunakan sertifikat \textit{self-signed} bawaan vendor.
+Interaksi antara server \textit{middleware} dengan perangkat keras terminal gerbang dilakukan melalui pemanggilan titik akhir (\textit{endpoint}) protokol ISAPI secara \textit{outbound}. Jalur ini digunakan untuk mengeksekusi perintah manajemen identitas dan penarikan log mentah. Seluruh integrasi dilakukan dengan menyertakan parameter kueri \textit{format=json} guna memastikan terminal memberikan respon dalam format yang terstandardisasi. Selain itu, permintaan data log dilakukan dengan menyertakan filter rentang waktu (\textit{Time-window Filtering}) yang spesifik, guna memastikan server hanya menarik rekaman terbaru dan menjaga efisiensi penggunaan lebar pita (\textit{bandwidth}) jaringan. 
 
-\input{tables/tab_api_isapi}
-fikat \textit{self-signed} bawaan vendor.
+Untuk menjamin efisiensi waktu pemrosesan harian, integrasi ISAPI juga dirancang menggunakan mekanisme orkestrasi paralel (\textit{Parallel Request Orchestration}). \textit{Middleware} melakukan pemanggilan titik akhir ke seluruh terminal gerbang secara serentak, sehingga total waktu eksekusi sinkronisasi tidak terakumulasi berdasarkan jumlah perangkat, melainkan hanya bergantung pada waktu respon terminal yang paling lambat. Mekanisme ini krusial untuk memastikan seluruh data dari keenam gerbang berhasil ditarik dalam jendela waktu penjadwalan 10 detik. 
+
+Sistem juga menerapkan protokol pembungkusan data (\textit{JSON Wrapping}) yang berjenjang, di mana setiap informasi yang dikirimkan ke terminal disusun ke dalam objek \textit{root} spesifik guna memenuhi kriteria parser pada lapisan perangkat keras. Selain itu, sistem menerapkan aturan penyelarasan dialek protokol (\textit{Dialect Alignment}), di mana struktur data wajib mengikuti aturan penulisan kunci (\textit{Key Case-Sensitivity}) yang spesifik terhadap standar vendor (seperti penggunaan \textit{PascalCase} pada objek utama) guna memastikan instruksi dapat diuraikan secara tepat. 
+
+Struktur integrasi ISAPI dirancang berdasarkan spesifikasi teknis vendor Hikvision sebagaimana tercantum dalam Tabel \ref{tab:api_isapi}. Selain itu, sistem menyertakan konfigurasi agen komunikasi yang fleksibel terhadap sertifikat keamanan perangkat keras pada jaringan lokal, memungkinkan pertukaran data terenkripsi (HTTPS) tetap berlangsung meskipun terminal menggunakan sertifikat \textit{self-signed} bawaan vendor.
 
 \input{tables/tab_api_isapi}

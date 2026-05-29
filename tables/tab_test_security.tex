@@ -1,0 +1,12 @@
+\begin{table}[t]
+\centering
+\caption{Hasil Pengujian Deteksi Anomali dan Audit Keamanan}
+\label{tab:test_security}
+\begin{tabular}{|l|p{5.2cm}|p{3.5cm}|c|}
+\hline
+\textbf{Skenario} & \textbf{Aktivitas Simulasi} & \textbf{Respon Sistem} & \textbf{Status} \\ \hline
+Deteksi Wajah Asing & Subjek tidak terdaftar mencoba memindai wajah di terminal. & Sistem secara otomatis mengunduh foto bukti biner dan memperbarui daftar transaksi log anomali pada dashboard secara real-time. & Lulus \\ \hline
+Verifikasi Visual & Petugas membuka dialog rincian kejadian log anomali. & Menampilkan \textit{snapshot} kejadian secara presisi untuk audit manual. & Lulus \\ \hline
+Verifikasi Privasi & Karyawan terdaftar melakukan akses secara normal. & Sistem mencatat log tanpa mengunduh foto bukti (\textit{privacy-by-default}). & Lulus \\ \hline
+\end{tabular}
+\end{table}

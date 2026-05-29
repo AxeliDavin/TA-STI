@@ -2,7 +2,6 @@
 \addcontentsline{toc}{chapter}{ABSTRAK}
 
 \begin{center}
-
     \textbf{Pengembangan Sistem Manajemen Karyawan Terpusat Berbasis Integrasi Perangkat Kontrol Akses pada Bangunan Gedung Cerdas} \\
     \vspace{0.4cm}
     oleh \\
@@ -11,34 +10,8 @@
     18222016\\
 \end{center}
 
-
 \begin{spacing}{1.0}
-Proses manual dalam rantai pasok jeruk di tingkat lapak, yang mencakup sortir,
-timbang, dan catat, terbukti tidak efisien, memakan waktu, dan rentan terhadap
-kesalahan. Meskipun solusi berbasis Internet of Things (IoT) dapat mengatasi
-masalah ini, arsitektur terpusat konvensional berbasis cloud justru menimbulkan
-masalah baru berupa latensi tinggi yang menghambat alur kerja real-time.
-Penelitian ini bertujuan untuk merancang dan mengimplementasikan sebuah
-purwarupa sistem smart scale berbasis IoT dengan pendekatan desentralisasi (edge
-computing) untuk meminimalkan latensi dan meningkatkan efisiensi operasional.
-Metode yang digunakan adalah Model Purwarupa, yang diwujudkan dalam bentuk
-perangkat keras dengan arsitektur prosesor ganda (Raspberry Pi 5 dan ESP32) yang
-mampu mengintegrasikan fungsi timbang dan analisis kualitas citra secara
-simultan. Hasil evaluasi menunjukkan bahwa purwarupa dengan arsitektur edge
-computing yang diimplementasikan mampu memberikan respons 43,5\% lebih cepat
-(latensi rata-rata 18,05 detik) dibandingkan dengan simulasi arsitektur terpusat.
-Selain itu, sistem ini berhasil meningkatkan efisiensi waktu kerja secara
-keseluruhan sebesar 58,32\% jika dibandingkan dengan metode manual
-konvensional. Pengujian Penerimaan Pengguna (UAT) yang melibatkan 30
-partisipan juga menunjukkan penerimaan yang sangat positif, dengan skor rata-rata
-untuk kemudahan penggunaan (5,0/5,0), kejelasan antarmuka (4,87/5,0) dan
-persepsi kinerja (4,95/5,0). Kesimpulannya, implementasi sistem smart scale
-dengan arsitektur desentralisasi terbukti merupakan solusi yang valid dan efektif
-untuk menjawab permasalahan latensi dan inefisiensi di lapak. Sistem ini tidak
-hanya unggul secara teknis dalam hal performa, tetapi juga fungsional dan dapat
-diterima dengan baik oleh pengguna akhir, serta berpotensi besar untuk modernisasi
-rantai pasok agribisnis.
+Manajemen akses fisik merupakan elemen krusial dalam operasional bangunan gedung cerdas dengan mobilitas tinggi. Saat ini, sistem kontrol akses di Gedung ITB Innovation Park (IIP) masih bersifat terfragmentasi karena ketergantungan pada perangkat lunak bawaan vendor yang tertutup, sehingga menghambat visibilitas data pergerakan penghuni secara \textit{real-time}. Penelitian ini bertujuan untuk merancang dan mengimplementasikan sistem manajemen karyawan terpusat menggunakan arsitektur lapisan penengah (\textit{middleware}) untuk mengatasi hambatan interoperabilitas tersebut. Sistem dikembangkan menggunakan kerangka kerja NestJS, PostgreSQL, dan Next.js, dengan memanfaatkan protokol \textit{Intelligent Security API} (ISAPI) untuk menjembatani komunikasi antara peladen dengan terminal biometrik pengenal wajah. Metodologi yang digunakan adalah \textit{Design Thinking} yang mencakup tahapan investigasi kebutuhan hingga pengujian sistem. Hasil evaluasi menunjukkan bahwa sistem berhasil melakukan sinkronisasi data identitas tekstual secara terpusat dan menyajikan log riwayat akses secara \textit{real-time} dengan rata-rata latensi sebesar 11.285 ms (sekitar 11,28 detik). Selain itu, sistem mengimplementasikan mekanisme deteksi anomali yang secara otomatis menangkap bukti visual (\textit{snapshot}) saat terjadi pelanggaran akses, dengan tetap menjaga privasi data biometrik pada kondisi normal. Penelitian ini membuktikan bahwa pendekatan integrasi melalui protokol terbuka mampu meningkatkan efisiensi administratif dan visibilitas operasional dalam pengelolaan keamanan gedung cerdas.
 
-Kata kunci: Smart Scale, Internet of Things, Edge Computing, Rantai Pasok Jeruk.
+Kata kunci: Gedung Cerdas, Kontrol Akses, \textit{Middleware}, ISAPI, \textit{Real-time Monitoring}.
 \end{spacing}
-

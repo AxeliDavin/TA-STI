@@ -1,0 +1,13 @@
+\begin{table}[t]
+\centering
+\caption{Hasil Pengujian Fungsionalitas Sinkronisasi Karyawan}
+\label{tab:test_functional}
+\begin{tabular}{|l|p{4.5cm}|p{4cm}|c|}
+\hline
+\textbf{Skenario} & \textbf{Langkah Pengujian} & \textbf{Hasil yang Diharapkan} & \textbf{Status} \\ \hline
+Pendaftaran Profil & Memasukkan Nama dan ID melalui \textit{dashboard}. & Data tersimpan di basis data dan identitas tekstual aktif di memori terminal gerbang. & Lulus \\ \hline
+Pembaruan Parsial & Melakukan perubahan nama karyawan melalui antarmuka manajemen. & Nama pada layar terminal gerbang diperbarui tanpa kendala sinkronisasi. & Lulus \\ \hline
+Penghapusan Identitas & Menjalankan instruksi hapus pada tabel master karyawan. & Rekaman identitas musnah dari basis data dan hak akses di gerbang dicabut. & Lulus \\ \hline
+Sinkronisasi Wajah & Mengunggah foto wajah melalui \textit{dashboard}. & Foto terkirim dan diikatkan pada ID karyawan di memori terminal. & Gagal \\ \hline
+\end{tabular}
+\end{table}

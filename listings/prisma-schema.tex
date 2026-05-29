@@ -1,5 +1,4 @@
 \begin{lstlisting}[language=bash, caption={Implementasi Skema Tabel Utama pada \texttt{schema.prisma}}, label={lst:prisma_schema}, frame=single, captionpos=t]
-// 1. Person (ISAPI Format: UserInfo Search)
 model person {
   employeeNo      String      @id @db.VarChar(32)
   name            String      @db.VarChar(128)
@@ -13,7 +12,6 @@ model person {
   access_records  access_record[]
 }
 
-// 2. Gate (Sesuai ERD)
 model gate {
   id              String      @id @default(uuid())
   device_id       String?     @unique
@@ -26,7 +24,6 @@ model gate {
   access_records  access_record[]
 }
 
-// 3. Access Record (ISAPI Format: AcsEvent)
 model access_record {
   serialNo           String      @id @db.VarChar(128)
   major              Int
